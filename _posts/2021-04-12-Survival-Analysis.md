@@ -4,9 +4,6 @@ title:  'Survial Analysis of Unemployment Data'
 date:   2021-04-19
 ---
 
-A test
-
-
 Survival analysis is the statistical analysis of duration data. Durations
 can be anything from life until death in the medical sciences, run until
 failure in engineering, or in this case, unemployment duration. In this
