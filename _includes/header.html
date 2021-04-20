@@ -1,0 +1,8 @@
+<header>
+    <ul class="nav">
+        {% for node in site.pages %}
+            <a href="{{node.url | prepend: site.baseurl}}">{{node.title}}</a>
+        {% endfor %}
+    </ul>
+</header>
+
