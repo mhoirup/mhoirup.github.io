@@ -80,7 +80,7 @@ p > a, cite > a, span > a {
   }
 
 body {
-    width: 77%;
+    width: 85%;
     margin-left: auto;
     margin-right: auto;
     padding-left: 13%;
@@ -217,16 +217,11 @@ h1 code, h2 code, h3 code {
 }
 
 table, table.booktabs {
-    // width: auto;
+    width: auto;
     border-spacing: 0px;
-    border-top: 1.5px solid $border-color;
-    border-bottom: 1.5px solid $border-color;
     margin-bottom: 1cm;
     margin-top: 1cm;
     width: 53%;
-    // margin-left: auto;
-    // margin-right: auto;
-    // padding-left: 12.5%;
 }
 
 .booktabs th, th {
@@ -238,6 +233,9 @@ table, table.booktabs {
 th, td {
     font-size: 14px;
     line-height: 1.71428571;
+    padding-left: 1.0em;
+    padding-right: 1.0em;
+    // border-bottom: 1px solid #ddd;
 }
 
 td code {
@@ -257,8 +255,8 @@ td code {
 } 
 
 .booktabs td, td {
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    padding-left: 1.0em;
+    padding-right: 1.0em;
     text-align: left;
 }            
 
@@ -493,7 +491,7 @@ ul.footer-links li{
 //Full width page styling stuff
 
 body.full-width {
-    width: 76%;
+    width: 85%;
     margin-left: auto;
     margin-right: auto;
     // padding: 0% 0%;
