@@ -11,7 +11,7 @@ project we seek to understand the factors affecting the probability of
 returning to the workforce.
 
 {% marginnote 'note1' 'Full code for this analysis can be found at
-[https://github.com/mhoirup/econometric-projects/tree/main/unemployment](https://github.com/mhoirup/econometric-projects/tree/main/unemployment)'%} 
+[https://github.com/mhoirup/econometric-projects/tree/main/unemployment](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).'%} 
 
 {% marginfigure 'spell_hist' 'assets/unemp/spell_hist.png'
 'Distribution of `spell`. A majority of respondents finished their
