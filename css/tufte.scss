@@ -45,8 +45,7 @@ html{
     color: #000000 !important;
     margin-left: 1.5cm !important;
     margin-right: auto !important;
-    // max-width: 1200px !important;
-    // width: 40% !important;
+    width: 40% !important;
 }
 
 
@@ -230,15 +229,19 @@ h1 code, h2 code, h3 code {
 table, table.booktabs {
     width: auto;
     border-spacing: 0px;
-    margin-bottom: 1cm;
+    margin-bottom: 1.2cm;
     margin-top: 1cm;
     width: 53%;
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
 }
 
+
 .booktabs th, th {
-    // border-bottom: 1px solid $border-color;
-    padding: 0.65ex 0.5em 0.4ex 0.5em;
-    font-weight: normal;
+    border-bottom: 1px solid $border-color;
+    padding: 0.65ex 0.5em 0.5ex 0.5em;
+    font-weight: bold;
+    font-family: Myriad;
 }
 
 th, td {
@@ -249,7 +252,7 @@ th, td {
     // border-bottom: 1px solid #ddd;
 }
 
-td code {
+th code, td code {
     font-family: OperatorMono;
 }
 
@@ -263,6 +266,10 @@ td code {
 
 .booktabs tbody tr:first-child td,  tr:first-child td {
     padding-top: 0.65ex; /* add space between thead row and tbody */
+} 
+
+.booktabs tbody tr:last-child td,  tr:last-child td {
+    padding-bottom: 0.65ex; /* add space between thead row and tbody */
 } 
 
 .booktabs td, td {

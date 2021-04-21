@@ -75,6 +75,7 @@ weeks. Except for `censor4`, the `censor` variables will not be needed in
 this analysis, as we're only interested in whether or not respondents had
 entered the workforce at the end of the survey.
 
+
 |:------------|:-------------------------------------------------------------|
 |`spell`      | Unemployment duration measured in two-week intervals.        |
 |`censor1`    | `1` if reemployed at a full-time position after ended spell. |
@@ -90,30 +91,27 @@ entered the workforce at the end of the survey.
 
 
 As a last step in the introduction, summary statistics are computed for
-each variable. The `dsummary()` function is my own and placed in my
+each variable. The `dsummary()` function I use is my own and placed in my
 `.Rprofile`, which can be found at
 [https://github.com/mhoirup/dotfiles/blob/main/.Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
 
-```R
-> dsummary(data)
-# $categorical
-#       var    type n.unique  mode prop.mode NAs
-# 1 censor1 logical        2 FALSE     67.90   0
-# 2 censor2 logical        2 FALSE     89.86   0
-# 3 censor3 logical        2 FALSE     82.83   0
-# 4 censor4 logical        2 FALSE     62.46   0
-# 5      ui  factor        2   yes     55.28   0
-# 
-# $numeric
-#       var    type   min  mean   max    sd NAs
-# 1   spell numeric  1.00  6.25 28.00  5.61   0
-# 2     age numeric 20.00 35.44 61.00 10.64   0
-# 3 reprate numeric  0.07  0.45  2.06  0.11   0
-# 4 disrate numeric  0.00  0.11  1.02  0.07   0
-# 5 logwage numeric  2.71  5.69  7.60  0.54   0
-# 6  tenure numeric  0.00  4.11 40.00  5.86   0
+|Variable  | Type     | $N$ Unique | Modal     | Modal (%)| `NA`s|
+|:---------|:---------|-----------:|:----------|---------:|-----:|
+|`censor1` |`logical` |           2| `FALSE`   |     67.90|     0|
+|`censor2` |`logical` |           2| `FALSE`   |     89.86|     0|
+|`censor3` |`logical` |           2| `FALSE`   |     82.83|     0|
+|`censor4` |`logical` |           2| `FALSE`   |     62.46|     0|
+|`ui`      |`factor`  |           2| `'yes'`   |     55.28|     0|
 
-```
+|Variable  |Min.   |Mean   |Max.   |SD     | `NA`s|
+|:---------|------:|------:|------:|:-----:|-----:|
+|`spell`   |1.000  |6.248  |28.000 |5.611  |     0|
+|`age`     |20.000 |35.443 |61.000 |10.640 |     0|
+|`reprate` |0.066  |0.454  |2.059  |0.114  |     0|
+|`disrate` |0.002  |0.109  |1.020  |0.074  |     0|
+|`logwage` |2.708  |5.693  |7.600  |0.536  |     0|
+|`tenure`  |0.000  |4.115  |40.000 |5.862  |     0|
+
 
 ## Censoring and Flow Sampling
 
@@ -144,7 +142,7 @@ the assumption that spells ultimately do end. From $S(t)$, we can obtain
 $E(T)$ as the area under the survival curve:
 
 $$
-    E(T)=\int_{0}^{\infty}[1-F(v)]\mathrm{d}v=\int_{0}^{\infty}S(v)\mathrm{d}v.
+    E(T)=\int_{0}^{\infty}[1-F(v)]dv=\int_{0}^{\infty}S(v)dv.
 $$
 
 While $S(t)$ gives the probability of continuing to the subsequent period
@@ -155,19 +153,24 @@ gives the 'hazard' of transitioning from the state of life to the state of
 death. The hazard function is defined as
 
 $$
-    \begin{aligned}
-        \lambda(t)&=\lim_{\Delta t\to 0}\frac{\Pr(t\leqslant T<t+\Delta t\mid
-        T\geqslant t)}{\Delta t}=\frac{f(t)}{S(t)} \\
-        &=-\frac{\mathrm{d}\ln S(t)}{\mathrm{d}t}
-    \end{aligned}
+    \lambda(t)=\begin{cases}
+    \lim_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
+        T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
+        S(t)}{dt}& \text{if $T$ is continuous. } \\
+        \Pr(T=t\mid T\geqslant t) & \text{if $T$ is discrete.}
+    \end{cases}
 $$
 
-where $f(t)=\mathrm{d}F(t)/\mathrm{d}t$ is the density function of $T$. Lastly, we have the
-**cumulative hazard function**, in which we integrate $\lambda(t)$ over the
-interval $[0,t]$, so that
+with the equality $\lambda(t)=f(t)/S(t)$ holding in both cases, where
+$f(t)=dF(t)/dt$ is the density function of $T$.  Lastly,
+we have the **cumulative hazard function**, in which we integrate
+$\lambda(t)$ over the interval $[0,t]$, so that
 
 $$
-    \Lambda(t)=\int_{0}^{t}\lambda(v)\mathrm{d}v
+    \Lambda(t)\begin{cases}
+    \int_{0}^{t}\lambda(v)dv& \text{for continuous }T \\
+    \sum_{j\mid t_j\leqslant t}^{} \lambda(t_j)& \text{if $T$ is discrete}
+    \end{cases}
 $$
 
 There's therefore no probabilistic interpretation of $\Lambda(t)$, as
@@ -175,22 +178,6 @@ it's essentially the summation of very small probabilities, and therefore
 not bounded within the unit interval, but it's a quantity which increases
 as $t\to\infty$, and can be viewed as the increased hazard of transitioning
 states as time goes on.
-
-### Function Definitions for Discrete Time
-
-In many applications, such as this one, we observe $T$ in discrete time,
-although the transition generating process is intristically continuous, in
-which we have what is known as **grouped data**. In such cases, where the
-data is grouped or the distribution of $T$ is actually discrete, we make
-the following corrections to the definitions given above:  
-
-$$
-    \begin{gather}
-    S(t)=\Pr(T\geqslant t)=\prod_{t_j\mid t_j\leqslant t} 1-\lambda(t_j) \\
-    \lambda(t)=\Pr(T=t\mid T\geqslant t)=\frac{f(t)}{S(t)} \\
-    \Lambda(t)=\sum_{t_j\mid t_j\leqslant t} \lambda(t_j)
-    \end{gather}
-$$
 
 ## Nonparametric Models
 
@@ -206,20 +193,15 @@ gives the 95% confidence bands. Note the sharp decline until around 8
 two-week intervals, after which rate of declining probability diminishes a
 bit.' %}
 
-Sample estimates for both the survivor and the cumulative hazard functions
-are readily available. For the former, we'll use the **Kaplan-Meier
-estimator**. Let $t_j:j=1,\ldots,k$ be the set of discrete
-state-change times of the spells in the sample (i.e. the unique values of
-`spell`), where $d_j$ is the number of spells that end at time $t_j$, and
-$m_j$ is the number of right-censored spells in the interval
-$[t_j,t_{j+1})$. An observation is said to be **at risk** if it has not yet
-transitioned or has been censored, where we define those the number of at risk
-observations as $r_j=\sum_{l\mid l\geqslant j}^{}(d_l+m_l)$. We then have
-the estimator
+Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available.  Define
+$d_j$ to be the number of spell end at time $t_j$, $m_j$ to be the number
+of right-censored spell in the $[t_j,t_{j+1})$, and $r_j$ is the number of
+spell that have neither ended or been censored (a quality known as being at
+risk) at time $t_j$. The **Kaplan-Meier** estimate for $S(t)$ is then  
 
 $$
     \hat{S}(t)=\prod_{j\mid t_j\leqslant t}1-\hat{\lambda}(t_j)=\prod_{t_j\mid
-    t_j\leqslant t}\frac{r_j-d_j}{d_j}
+    j\leqslant t}\frac{r_j-d_j}{d_j}
 $$
 
 where $\hat{\lambda}(t_j)=d_j/r_j$ is our (discrete time) sample estimate for

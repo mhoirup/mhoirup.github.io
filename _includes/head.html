@@ -18,17 +18,14 @@
                 fonts: ["STIX"],
                 imageFont: null,
                 undefinedFamily: "'Arial Unicode MS', cmbright",
-                mtextInheritFont: true,
+                mtextFontInherit: true,
             },
             TeX: {
                 extensions: ["AMSmath.js", "AMSsymbols.js", "noErrors.js", "noUndefined.js"],
                 Macros: { plim: '\\mathop{\\rm plim}'
                 }
             },
-            styles: {
-                ".MathJax_CHTML, .MathJax_Display, .MathJax_CHTML_Display, .MathJax_Preview, .MathJax_Preview > *":
-                    { "background": "inherit" }
-            },
+            styles: { ".MathJax_Display, .MathJax > *": { "background": "inherit" }},
         });
         </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
