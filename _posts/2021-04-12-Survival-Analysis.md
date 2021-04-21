@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Survial Analysis of Unemployment Data'
-date:   2021-04-19
+date:   2021-04-21
 ---
 
 Survival analysis is the statistical analysis of duration data. Durations
@@ -11,7 +11,9 @@ project we seek to understand the factors affecting the probability of
 returning to the workforce.
 
 {% marginnote 'note1' 'Full code for this analysis can be found at
-[https://github.com/mhoirup/econometric-projects/tree/main/unemployment](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).'%} 
+[https://github.com/mhoirup/econometric-projects/tree/main/unemployment](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).
+Note that the files are split into `imports.R`, `exploratory.R` and
+`analysis.R` to keep some semblance of organisation in the code structure.'%}
 
 {% marginfigure 'spell_hist' 'assets/unemp/spell_hist.png'
 'Distribution of `spell`. A majority of respondents finished their
@@ -274,6 +276,30 @@ while the confidence intervals for the survivor function were available
 within the `survfit` object, we have to compute them manually for $\hat{\Lambda}(t)$. 
 
 ## Semiparametric and Parametric Specifications
+
+In the following we'll introduce semi- and fully-parametric specifications
+for the either explicit, or implicit, estimation of the conditional hazard
+rate $\lambda(t\mid \boldsymbol{x})$. For the parametric specifications the
+entertained distributions are the exponential, Weibull, log-normal and
+log-logistic distribution. Only the exponential and Weibull distributions
+can be used for the **proportional hazard** (PH) model, while all can be used
+for the **accelerated failure time** (AFT) model.
+
+### Proportional Hazard Models
+
+The PH model formulates $\lambda(t\mid \boldsymbol{x})$ as factored into
+separate functions 
+
+$$
+    \lambda(t\mid \boldsymbol{x})=\lambda_0(t)
+    h(\boldsymbol{x},\boldsymbol{\beta})
+$$
+
+where $\lambda_0(t)$ is the **baseline hazard**, that is, the hazard
+function as specified by the distribution, and
+$h(\boldsymbol{x},\boldsymbol{\beta})$ is a scale factor, where typically
+$h(\boldsymbol{x},\boldsymbol{\beta})=\exp(\boldsymbol{x}^{\small{\prime}}\boldsymbol{\beta})$.
+For example, under the Weibull distribution we have $\lambda_0(t)=$ 
 
 
 

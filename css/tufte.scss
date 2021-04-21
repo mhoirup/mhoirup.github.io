@@ -39,6 +39,17 @@ html{
 //     font-size: 3.6rem !important;
 // }
 
+.MathJax_Display {
+    font-size: 1.4rem !important;
+    text-align: left !important;
+    color: #000000 !important;
+    margin-left: 1.5cm !important;
+    margin-right: auto !important;
+    // max-width: 1200px !important;
+    // width: 40% !important;
+}
+
+
 .MathJax_CHTML {
     color: #000000 !important;
     font-weight: 500 !important;
@@ -121,7 +132,7 @@ h2 {
 }
 
 h3 { 
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     line-height: 1.08888888888889; }
 
 p .subtitle {
@@ -225,7 +236,7 @@ table, table.booktabs {
 }
 
 .booktabs th, th {
-    border-bottom: 1px solid $border-color;
+    // border-bottom: 1px solid $border-color;
     padding: 0.65ex 0.5em 0.4ex 0.5em;
     font-weight: normal;
 }
