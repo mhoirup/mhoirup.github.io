@@ -24,15 +24,18 @@ We begin the analysis by loading the data into our R workspace along with
 the packages we're going to use. 'Data is loaded from the `Ecdat` package
 in R, which can be found at
 [https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf](https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf)
-. The data was used in McCall, B. P. (1996) “Unemployment Insurance Rules,
-Joblessness, and Part-time Work”, *Econometrica*, 64, 647–682.
+. The data was used in McCall (1996).
 
 {% marginfigure 'censored_hist' 'assets/unemp/censored_hist.png' "Distributions
 of the four `censor` variables where I've changed the `1`s and `0`s into
-booleans for clarity." %}
+booleans for clarity. Here we note the distribution of `censor4` which is
+of interest; 1.255 observations have been censored, while 2.088
+observations correspond to completed spells." %}
 
 {% marginfigure 'age_hist' 'assets/unemp/age_hist.png' 'Distribution
-of `age`. Bin width is set at 2.'  %}
+of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
+A majority of respondents is under the age of 40, 2.231 in fact, which
+corresponds to 68% of all observations.'  %}
 
 ```R
 library(dplyr)
@@ -61,11 +64,11 @@ glimpse(data)
 {% marginfigure 'reprate_hist' "assets/unemp/reprate_hist.png"
 "Distribution of `reprate`. deriving the unique value via
 `length(unique(data$reprate))` actually shows that the variable, with 3.343
-values, only has 419 unique values, suggesting that the replacement isn't
-necessarily continuous."  %}
+observations, only has 419 unique values, suggesting that the replacement isn't
+necessarily continuous. Without much more info about the rate, and
+considering the relatively large amount of unique values, we're going to
+treat `reprate` as continuous."  %}
 
-{% marginfigure 'disrate_hist' 'assets/unemp/disrate_hist.png' 'Distribution
-of `age`. Bin width is set at 2.'  %}
 
 
 Below is a table with a brief description of each variable. In particular,
@@ -120,17 +123,23 @@ spell; a spell may still be ongoing at the time of the measurement, in
 which case we have a censored observation. 
 
 
-{% maincolumn 'assets/unemp/spell_censor4.png' "`Censor4` over the values
-of `spell`. " %}
+{% maincolumn 'assets/unemp/spell_censor4.png' "`censor4` over the values
+of `spell`. Unsurprisingly, the length of the spell appear to correspond to
+a greater chance of an observation being censored, which aligns with the
+conventional wisdom that unemployment is harder to escape the longer one is
+in it, making a spell exceed the sampling period. The correlation
+coefficient between `censor4` and `spell` is 0.31, which adds evidence to
+the previous statement." %}
 
-{% marginfigure 'logwage_hist' 'assets/unemp/logwage_hist.png' 'Distribution
-of `age`. Bin width is set at 2.'  %}
+{% marginfigure 'disrate_hist' 'assets/unemp/disrate_hist.png' ''  %}
+
+
+{% marginfigure 'logwage_hist' 'assets/unemp/logwage_hist.png' ''  %}
 
 ## Survivor, Hazard and Cumulative Hazard Functions
 
 
-{% marginfigure 'tenure_hist' 'assets/unemp/tenure_hist.png' 'Distribution
-of `age`. Bin width is set at 2.'  %}
+{% marginfigure 'tenure_hist' 'assets/unemp/tenure_hist.png' ''  %}
 
 Let $T$ denote our response variable, in this case `spell`. For the
 variable $T$, which quantifies the duration of moving from one state to
@@ -167,7 +176,7 @@ we have the **cumulative hazard function**, in which we integrate
 $\lambda(t)$ over the interval $[0,t]$, so that
 
 $$
-    \Lambda(t)\begin{cases}
+    \Lambda(t)=\begin{cases}
     \int_{0}^{t}\lambda(v)dv& \text{for continuous }T \\
     \sum_{j\mid t_j\leqslant t}^{} \lambda(t_j)& \text{for discrete $T$}
     \end{cases}
