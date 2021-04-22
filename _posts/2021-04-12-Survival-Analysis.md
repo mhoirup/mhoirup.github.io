@@ -95,7 +95,7 @@ each variable. The `dsummary()` function I use is my own and placed in my
 `.Rprofile`, which can be found at
 [https://github.com/mhoirup/dotfiles/blob/main/.Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
 
-|Variable  | Type     | $N$ Unique | Modal     | Modal (%)| `NA`s|
+|Variable  | Type     | N Unique | Modal     | Modal (%)| `NA`s|
 |:---------|:---------|-----------:|:----------|---------:|-----:|
 |`censor1` |`logical` |           2| `FALSE`   |     67.90|     0|
 |`censor2` |`logical` |           2| `FALSE`   |     89.86|     0|
@@ -117,7 +117,7 @@ each variable. The `dsummary()` function I use is my own and placed in my
 
 Censoring in the context of survival data is the incomplete measure of a
 spell; a spell may still be ongoing at the time of the measurement, in
-which case we have a censered observation. 
+which case we have a censored observation. 
 
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "`Censor4` over the values
@@ -156,8 +156,8 @@ $$
     \lambda(t)=\begin{cases}
     \lim_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
         T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
-        S(t)}{dt}& \text{if $T$ is continuous. } \\
-        \Pr(T=t\mid T\geqslant t) & \text{if $T$ is discrete.}
+        S(t)}{dt}& \text{for continuous $T$ } \\
+        \Pr(T=t\mid T\geqslant t) & \text{for discrete $T$}
     \end{cases}
 $$
 
@@ -169,7 +169,7 @@ $\lambda(t)$ over the interval $[0,t]$, so that
 $$
     \Lambda(t)\begin{cases}
     \int_{0}^{t}\lambda(v)dv& \text{for continuous }T \\
-    \sum_{j\mid t_j\leqslant t}^{} \lambda(t_j)& \text{if $T$ is discrete}
+    \sum_{j\mid t_j\leqslant t}^{} \lambda(t_j)& \text{for discrete $T$}
     \end{cases}
 $$
 
@@ -195,29 +195,23 @@ bit.' %}
 
 Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available.  Define
 $d_j$ to be the number of spell end at time $t_j$, $m_j$ to be the number
-of right-censored spell in the $[t_j,t_{j+1})$, and $r_j$ is the number of
+of right-censored spell in the interval $[t_j,t_{j+1})$, and $r_j$ is the number of
 spell that have neither ended or been censored (a quality known as being at
 risk) at time $t_j$. The **Kaplan-Meier** estimate for $S(t)$ is then  
 
 $$
-    \hat{S}(t)=\prod_{j\mid t_j\leqslant t}1-\hat{\lambda}(t_j)=\prod_{t_j\mid
-    j\leqslant t}\frac{r_j-d_j}{d_j}
+    \hat{S}(t)=\prod_{j\mid t_j\leqslant
+    t}1-\hat{\lambda}(t_j)=\prod_{j\mid j\leqslant t}\frac{r_j-d_j}{d_j}
 $$
 
-where $\hat{\lambda}(t_j)=d_j/r_j$ is our (discrete time) sample estimate for
-the hazard function. $100(1-\alpha)$% confidence bands are obtained via the
-**Greenwood estimate** of the standard deviation
+where $\hat{\lambda}(t_j)=d_j/r_j$ is our sample estimate for
+the hazard function. Similarly, a nonparametric specification is available
+for cumulative hazard function via the **Nelson-Aalen** estimator given as 
 
 $$
-    \hat{\sigma}(t)=\left(\hat{S}(t)^2\sum_{j\mid t_j\leqslant t}
-    \frac{d_j}{r_j(r_j-d_j)}\right)^{0.5}
+    \hat{\Lambda}(y)=\sum_{j\mid y_j\leqslant y}\hat{\lambda}(t_j)=
+    \sum_{j\mid y_j\leqslant y }\frac{d_j}{r_j}
 $$
-
-$$
-    S(t)\in\left[\hat{S}(t)\exp\left(-z_{\alpha/2}\cdot\hat{\sigma}(t)\right),
-    \ \hat{S}(t)\exp\left(z_{\alpha/2}\cdot\hat{\sigma}(t)\right)\right]
-$$
-
 
 Nonparametric estimates are computed in R via
 
@@ -228,10 +222,6 @@ uvnonparam <- survfit(Surv(spell, censor4 == 0) ~ 1, data)
 mvnonparam <- survfit(Surv(spell, censor4 == 0) ~ ui, data)
 
 ```
-
-where the Kaplan-Meier estimate of the survivor function is obtained from
-the `surv` attribute, and the confidence bands from the `upper` and `lower`
-attributes from the resulting model object.
 
 {% marginfigure 'nelson_aalen' 'assets/unemp/nelson_aalen.png'
 'Kaplan-Meier estimator of the survivor function on `spell`. Shaded area
@@ -245,17 +235,19 @@ gives the 95% confidence bands. Note the sharp decline until around 8
 two-week intervals, after which rate of declining probability diminishes a
 bit.' %}
 
+While the confidence intervals were readily available in the `survfit`
+object for $\hat{S}(t)$, they must be manually computed for
+$\hat{\Lambda}(t)$, which we do as  
 
-Similar to the Kaplan-Meier estimator, we have the **Nelson-Aalen
-estimator** for the cumulative hazard being given as
+```R
+chazci <- function(model, alpha = .05) {
+    lower <- model$cumhaz * exp(qnorm(alpha / 2, 0, 1) * model$std.chaz)
+    upper <- model$cumhaz * exp(-qnorm(alpha / 2, 0, 1) * model$std.chaz)
+    data.frame(lower, upper)
+}
 
-$$
-    \hat{\Lambda}(y)=\sum_{j\mid y_j\leqslant y}\hat{\lambda}_j=
-    \sum_{j\mid y_j\leqslant y }\frac{d_j}{r_j}
-$$
+```
 
-while the confidence intervals for the survivor function were available
-within the `survfit` object, we have to compute them manually for $\hat{\Lambda}(t)$. 
 
 ## Semiparametric and Parametric Specifications
 
