@@ -97,14 +97,14 @@ can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rp
 |`ui`      |`factor`  |         2| `'yes'`   |   55.28|     0|
 
 
-|Variable  |Min.   |Mean   |Max.   |SD     | `NA`s|
-|:---------|------:|------:|------:|:-----:|-----:|
-|`spell`   |1.00  |6.25  |28.00 |5.61  |     0|
-|`age`     |20.00 |35.44 |61.00 |10.64 |     0|
-|`reprate` |0.07  |0.45  |2.06  |0.11  |     0|
-|`disrate` |0.00  |0.11  |1.02  |0.07  |     0|
-|`logwage` |2.71  |5.69  |7.60  |0.54  |     0|
-|`tenure`  |0.00  |4.12  |40.00 |5.86  |     0|
+|Variable  |Min   |Mean  |Max.  |SD    | NAs |
+|:---------|-----:|-----:|-----:|:----:|----:|
+|`spell`   |1.00  |6.25  |28.00 |5.61  |    0|
+|`age`     |20.00 |35.44 |61.00 |10.64 |    0|
+|`reprate` |0.07  |0.45  |2.06  |0.11  |    0|
+|`disrate` |0.00  |0.11  |1.02  |0.07  |    0|
+|`logwage` |2.71  |5.69  |7.60  |0.54  |    0|
+|`tenure`  |0.00  |4.12  |40.00 |5.86  |    0|
 
 
 ## Censoring and Flow Sampling
@@ -154,7 +154,7 @@ death. The hazard function is defined as
 
 $$
     \lambda(t)=\begin{cases}
-    \lim_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
+    \lim\limits_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
         T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
         S(t)}{dt}& \text{continuous} \\
         \Pr(T=t\mid T\geqslant t) & \text{for discrete $T$}
