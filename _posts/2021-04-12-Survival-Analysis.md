@@ -156,7 +156,7 @@ $$
     \lambda(t)=\begin{cases}
     \lim_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
         T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
-        S(t)}{dt}& \text{for continuous $T$ } \\
+        S(t)}{dt}& \text{continuous} \\
         \Pr(T=t\mid T\geqslant t) & \text{for discrete $T$}
     \end{cases}
 $$
