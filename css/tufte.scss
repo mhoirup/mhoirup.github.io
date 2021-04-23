@@ -26,7 +26,7 @@ html{
     text-align: baseline;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 10.5px;
+    font-size: 1rem;
   }
   
 
@@ -63,10 +63,9 @@ html{
 a {
     color: $contrast-color;
     text-decoration: none;
-    font-size: 16px;
     font-family: Myriad;
     letter-spacing: 0.03rem;
-    font-size: 19px;
+    font-size: 1.4rem;
 }
 
 p > a, cite > a, span > a {
@@ -234,9 +233,10 @@ table.norulers {
 }
 
 table.norulers td {
-    font-size: 13.0px;
+    font-size: 10.5px;
     border-bottom: 0px solid $border-color;
 }
+
 
 table.norulers tr code {
     font-family: OperatorMono;
@@ -249,8 +249,6 @@ table, table.booktabs {
     margin-top: 1cm;
     width: 53%;
     font-size: 17px;
-    // border-top: 2px solid $border-color;
-    // border-bottom: 2px solid $border-color;
 }
 
 
@@ -371,7 +369,7 @@ img { max-width: 100%; }
     width: 50%;
     margin-top: 0;
     margin-bottom: 1.96rem;
-    font-size: 1.1rem;
+    font-size: 10px;
     line-height: 1.96; //changed to bring line heights into rational pattern
     vertical-align: baseline;
     position: relative;
