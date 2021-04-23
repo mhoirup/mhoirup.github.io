@@ -26,7 +26,7 @@ html{
     text-align: baseline;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 12.5px;
+    font-size: 10.5px;
   }
   
 
@@ -48,7 +48,6 @@ html{
     width: 40% !important;
 }
 
-
 .MathJax_CHTML {
     color: #000000 !important;
     font-weight: 500 !important;
@@ -61,7 +60,6 @@ html{
     text-align: left !important;
 }
 
-// sets link style according to values in _settings.scss
 a {
     color: $contrast-color;
     text-decoration: none;
@@ -106,9 +104,6 @@ body {
 
 h1 {
     font-weight: 200;
-    // font-family: PalatinoSC;
-    // font-family: Palatino;
-    font-family: Myriad;
     font-family: Minion;
     font-weight: normal;
     font-style: italic;
@@ -120,10 +115,6 @@ h1 {
 }
 
 h2, h3 {
-    font-style: normal;
-    font-family: Palatino;
-    font-family: Myriad;
-    font-weight: bold;
     font-family: Minion;
     font-weight: normal;
     font-style: italic;
