@@ -26,7 +26,7 @@ html{
     text-align: baseline;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 10.5px;
+    font-size: 13.5px;
   }
   
 
@@ -65,9 +65,10 @@ html{
 a {
     color: $contrast-color;
     text-decoration: none;
-    font-weight: 300;
-    font-size: 14px;
-    font-family: OperatorMono;
+    font-size: 16px;
+    font-family: Myriad;
+    letter-spacing: 0.03rem;
+    font-size: 19px;
 }
 
 p > a, cite > a, span > a {
@@ -95,19 +96,22 @@ body {
     margin-right: auto;
     padding-left: 13%;
     // font-family: Myriad;
-    font-family: Lato;
+    font-family: Myriad;
     background-color: $bg-color;
     color: $text-color;
     max-width: 1400px;
     counter-reset: sidenote-counter;
 }
 
+
 h1 {
     font-weight: 200;
     // font-family: PalatinoSC;
     // font-family: Palatino;
     font-family: Myriad;
-    font-weight: bold;
+    font-family: Minion;
+    font-weight: normal;
+    font-style: italic;
     margin-top: 2.5rem;
     margin-top: 1.5cm;
     margin-bottom: 1.568rem;
@@ -120,6 +124,9 @@ h2, h3 {
     font-family: Palatino;
     font-family: Myriad;
     font-weight: bold;
+    font-family: Minion;
+    font-weight: normal;
+    font-style: italic;
     margin-top: 1.966666666666667rem;
     margin-bottom: -0.5rem;
 }
@@ -203,14 +210,14 @@ blockquote footer {  font-size: 1.1rem;
 pre, pre code, p code, p pre code {
     font-family: OperatorMono;
     // font-size: 1.2rem;
-    font-size: 15px;
+    font-size: 18px;
     // line-height: 1.71428571;
     margin-top: 1.71428571rem;
     color: $code-color;
 }
 
 pre code {
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.5;
     // line-height: 1.71428571;
     margin-top: 1.71428571rem;
@@ -226,30 +233,54 @@ h1 code, h2 code, h3 code {
     font-size: 0.80em;
 }
 
+table.norulers {
+    width: auto;
+    border-spacing: 0px;
+    margin-bottom: 1.2cm;
+    margin-top: 1cm;
+    width: 53%;
+    border-top: 0px solid $border-color;
+    border-bottom: 0px solid $border-color;
+}
+
+table.norulers td {
+    font-size: 18.0px;
+    border-bottom: 0px solid $border-color;
+}
+
+table.norulers tr code {
+    font-family: OperatorMono;
+}
+
 table, table.booktabs {
     width: auto;
     border-spacing: 0px;
     margin-bottom: 1.2cm;
     margin-top: 1cm;
     width: 53%;
-    border-top: 1px solid $border-color;
-    border-bottom: 1px solid $border-color;
+    font-size: 17px;
+    // border-top: 2px solid $border-color;
+    // border-bottom: 2px solid $border-color;
 }
 
 
 .booktabs th, th {
     border-bottom: 1px solid $border-color;
     padding: 0.65ex 0.5em 0.5ex 0.5em;
-    font-weight: bold;
-    font-family: Myriad;
+    font-family: Minion;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 20px;
+    // font-family: Myriad;
 }
 
+
 th, td {
-    font-size: 14px;
+    // font-size: 19.0px;
     line-height: 1.71428571;
     padding-left: 1.0em;
     padding-right: 1.0em;
-    // border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 th code, td code {
@@ -265,11 +296,11 @@ th code, td code {
 }
 
 .booktabs tbody tr:first-child td,  tr:first-child td {
-    padding-top: 0.65ex; /* add space between thead row and tbody */
+    padding-top: 0.95ex; /* add space between thead row and tbody */
 } 
 
 .booktabs tbody tr:last-child td,  tr:last-child td {
-    padding-bottom: 0.65ex; /* add space between thead row and tbody */
+    padding-bottom: 0.95ex; /* add space between thead row and tbody */
 } 
 
 .booktabs td, td {
@@ -350,14 +381,14 @@ img { max-width: 100%; }
     width: 50%;
     margin-top: 0;
     margin-bottom: 1.96rem;
-    font-size: 1.0rem;
+    font-size: 1.1rem;
     line-height: 1.96; //changed to bring line heights into rational pattern
     vertical-align: baseline;
     position: relative;
 }
 
 .marginnote a {
-    font-size: 1.0rem;
+    font-size: 1.15rem;
 }
 
 
@@ -460,8 +491,9 @@ figcaption.maincolumn-figure code {
     color: $contrast-color;
 }
 .smaller {
-    font-size: 80%;
-    font-family: Lato;
+    font-size: 14px;
+    font-family: Myriad;
+    font-style: normal;
 }
 
 //Nav and Footer styling area
@@ -482,6 +514,9 @@ figcaption.maincolumn-figure code {
     margin-top: 20px;
     display:inline-block;
     padding:10px;
+    font-size: 22px;
+    font-family: Minion;
+    font-style: italic;
 }
 
 ul.footer-links, .credits{
@@ -528,7 +563,8 @@ body.full-width {
 
 .full-width article p {
     width: 89%;
-    font-family: Lato;
+    font-family: Myriad;
+    font-style: normal;
 }
 
 h1.content-listing-header{
@@ -536,7 +572,6 @@ h1.content-listing-header{
     margin-left: auto;
     margin-right: auto;
     font-style: italic;
-    // text-transform: uppercase;
     letter-spacing: 0.1rem;
     text-align: center;
 }
@@ -547,9 +582,11 @@ li.listing hr{
 .listing, .listing h3 {
     display: inline-block;
     margin:0;
-    font-style: normal;
-    font-family: OperatorMono;
+    // font-family: OperatorMono;
+    font-family: Minion;
+    font-style: italic;
     font-weight: 100;
+    font-size: 26px;
 }
 
 li.listing {

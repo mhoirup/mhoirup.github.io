@@ -10,31 +10,30 @@ failure in engineering, or in this case, unemployment duration. In this
 project we seek to understand the factors affecting the probability of
 returning to the workforce.
 
-{% marginnote 'note1' 'Full code for this analysis can be found at
-[https://github.com/mhoirup/econometric-projects/tree/main/unemployment](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).
+{% marginnote 'note1' 'Full code for this analysis can be found on my github
+[here](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).
 Note that the files are split into `imports.R`, `exploratory.R` and
 `analysis.R` to keep some semblance of organisation in the code structure.'%}
 
-{% marginfigure 'spell_hist' 'assets/unemp/spell_hist.png'
-'Distribution of `spell`. A majority of respondents finished their
+{% marginfigure 'fig1' 'assets/unemp/spell_hist.png'
+'**Figure 1**: Distribution of `spell`. A majority of respondents finished their
 unemployment spell prior to 10x2 = 20 week mark, with relatively few
 surpassing 15 two-week intervals.' %}
 
 We begin the analysis by loading the data into our R workspace along with
-the packages we're going to use. 'Data is loaded from the `Ecdat` package
-in R, which can be found at
-[https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf](https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf)
-. The data was used in McCall (1996).
+the packages we're going to use. The data itself is from [the Ecdat
+package](https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf) and was
+used in McCall (1996).
 
-{% marginfigure 'censored_hist' 'assets/unemp/censored_hist.png' "Distributions
-of the four `censor` variables where I've changed the `1`s and `0`s into
-booleans for clarity. Here we note the distribution of `censor4` which is
-of interest; 1.255 observations have been censored, while 2.088
-observations correspond to completed spells." %}
+{% marginfigure 'fig2' 'assets/unemp/censored_hist.png' "**Figure
+2**: Distributions of the four `censor` variables where I've changed the
+`1`s and `0`s into booleans for clarity. Here we note the distribution of
+`censor4` which is of interest; 1.255 observations have been censored,
+while 2.088 observations correspond to completed spells." %}
 
-{% marginfigure 'age_hist' 'assets/unemp/age_hist.png' 'Distribution
+{% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
 of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
-A majority of respondents is under the age of 40, 2.231 in fact, which
+A majority of respondents is under 40 years of age, 2.231 in fact, which
 corresponds to 68% of all observations.'  %}
 
 ```R
@@ -44,20 +43,14 @@ library(survival)
 library(ggplot2)
 
 data(UnempDur); data <- UnempDur; rm(UnempDur)
-glimpse(data)
-# Rows: 3,343
-# Columns: 11
-# $ spell   <dbl> 5, 13, 21, 3, 9, 11, 1, 3, 7, 5, 7, 15, 2, 3, 1, 2, 14, 1, 1,…
-# $ censor1 <dbl> 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0…
-# $ censor2 <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
-# $ censor3 <dbl> 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0…
-# $ censor4 <dbl> 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1…
-# $ age     <dbl> 41, 30, 36, 26, 22, 43, 24, 32, 35, 31, 26, 49, 39, 40, 20, 3…
-# $ ui      <fct> no, yes, yes, yes, yes, yes, no, no, yes, yes, yes, yes, no, …
-# $ reprate <dbl> 0.179, 0.520, 0.204, 0.448, 0.320, 0.187, 0.520, 0.373, 0.520…
-# $ disrate <dbl> 0.045, 0.130, 0.051, 0.112, 0.080, 0.047, 0.130, 0.093, 0.130…
-# $ logwage <dbl> 6.89568, 5.28827, 6.76734, 5.97889, 6.31536, 6.85435, 5.60947…
-# $ tenure  <dbl> 3, 6, 1, 3, 0, 9, 1, 0, 2, 1, 2, 21, 0, 0, 0, 14, 10, 10, 0, …
+head(data)
+#   spell censor1 censor2 censor3 censor4 age  ui reprate disrate logwage tenure
+# 1     5       1       0       0       0  41  no   0.179   0.045 6.89568      3
+# 2    13       1       0       0       0  30 yes   0.520   0.130 5.28827      6
+# 3    21       1       0       0       0  36 yes   0.204   0.051 6.76734      1
+# 4     3       1       0       0       0  26 yes   0.448   0.112 5.97889      3
+# 5     9       0       0       1       0  22 yes   0.320   0.080 6.31536      0
+# 6    11       0       0       0       1  43 yes   0.187   0.047 6.85435      9
 
 ```
 
@@ -69,8 +62,6 @@ necessarily continuous. Without much more info about the rate, and
 considering the relatively large amount of unique values, we're going to
 treat `reprate` as continuous."  %}
 
-
-
 Below is a table with a brief description of each variable. In particular,
 note how `spell` give the duration of unemployment in two-week intervals,
 for example, if `spell == 2`, a respondent has been unemployed for four
@@ -78,42 +69,42 @@ weeks. Except for `censor4`, the `censor` variables will not be needed in
 this analysis, as we're only interested in whether or not respondents had
 entered the workforce at the end of the survey.
 
-
-|:------------|:-------------------------------------------------------------|
-|`spell`      | Unemployment duration measured in two-week intervals.        |
-|`censor1`    | `1` if reemployed at a full-time position after ended spell. |
-|`censor2`    | `1` if reemployed at a part-time position after ended spell. |
-|`censor3`    | `1` if reemployed but later resigned from that reemployment. | 
-|`censor4`    | `1` if still unemployed after survey end.                    |
-|`age`        | Age of respondent.                                           |
-|`ui`         | `1` if respondent has unemployment insurance.                |
-|`reprate`    | Eligeble replacement rate.                                   |
-|`disrate`    | Eligeble disregard rate.                                     |
-|`logwage`    | Logarithmic weekly earnings.                                 |
-|`tenure`     | Tenure at lost job.                                          |
+<table class='norulers'>
+<tr><td><code>spell</code></td><td>Unemployment duration measured in two-week intervals.</td></tr>
+<tr><td><code>censor1</code></td><td><code>1</code> if reemployed at a full-time position after ended spell.</td></tr>
+<tr><td><code>censor2</code></td><td><code>1</code> if reemployed at a part-time position after ended spell.</td></tr>
+<tr><td><code>censor3</code></td><td><code>1</code> if reemployed but later resigned from that reemployment..</td></tr>
+<tr><td><code>censor4</code></td><td><code>1</code> if still unemployed at survey end.</td></tr>
+<tr><td><code>age</code></td><td>Age of respondent.</td></tr>
+<tr><td><code>ui</code></td><td><code>1</code> if respondent has unemployment insurance.</td></tr>
+<tr><td><code>reprate</code></td><td>Eligible replacement rate.</td></tr>
+<tr><td><code>disrate</code></td><td>Eligible disregard rate.</td></tr>
+<tr><td><code>logwage</code></td><td>Logarithmic weekly earnings.</td></tr>
+<tr><td><code>tenure</code></td><td>Tenure at lost job.</td></tr>
+</table>
 
 
 As a last step in the introduction, summary statistics are computed for
-each variable. The `dsummary()` function I use is my own and placed in my
-`.Rprofile`, which can be found at
-[https://github.com/mhoirup/dotfiles/blob/main/.Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
+each variable using my own `dsummary()` function, the definition of which
+can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
 
-|Variable  | Type     | N Unique | Modal     | Modal (%)| `NA`s|
-|:---------|:---------|-----------:|:----------|---------:|-----:|
-|`censor1` |`logical` |           2| `FALSE`   |     67.90|     0|
-|`censor2` |`logical` |           2| `FALSE`   |     89.86|     0|
-|`censor3` |`logical` |           2| `FALSE`   |     82.83|     0|
-|`censor4` |`logical` |           2| `FALSE`   |     62.46|     0|
-|`ui`      |`factor`  |           2| `'yes'`   |     55.28|     0|
+|Variable  | Type     | N Unique | Modal     | Modal %| NAs  |
+|:---------|:---------|---------:|:----------|-------:|-----:|
+|`censor1` |`logical` |         2| `FALSE`   |   67.90|     0|
+|`censor2` |`logical` |         2| `FALSE`   |   89.86|     0|
+|`censor3` |`logical` |         2| `FALSE`   |   82.83|     0|
+|`censor4` |`logical` |         2| `FALSE`   |   62.46|     0|
+|`ui`      |`factor`  |         2| `'yes'`   |   55.28|     0|
+
 
 |Variable  |Min.   |Mean   |Max.   |SD     | `NA`s|
 |:---------|------:|------:|------:|:-----:|-----:|
-|`spell`   |1.000  |6.248  |28.000 |5.611  |     0|
-|`age`     |20.000 |35.443 |61.000 |10.640 |     0|
-|`reprate` |0.066  |0.454  |2.059  |0.114  |     0|
-|`disrate` |0.002  |0.109  |1.020  |0.074  |     0|
-|`logwage` |2.708  |5.693  |7.600  |0.536  |     0|
-|`tenure`  |0.000  |4.115  |40.000 |5.862  |     0|
+|`spell`   |1.00  |6.25  |28.00 |5.61  |     0|
+|`age`     |20.00 |35.44 |61.00 |10.64 |     0|
+|`reprate` |0.07  |0.45  |2.06  |0.11  |     0|
+|`disrate` |0.00  |0.11  |1.02  |0.07  |     0|
+|`logwage` |2.71  |5.69  |7.60  |0.54  |     0|
+|`tenure`  |0.00  |4.12  |40.00 |5.86  |     0|
 
 
 ## Censoring and Flow Sampling
@@ -171,7 +162,7 @@ $$
 $$
 
 with the equality $\lambda(t)=f(t)/S(t)$ holding in both cases, where
-$f(t)=dF(t)/dt$ is the density function of $T$.  Lastly,
+$f(t)=dF(t)/dt$ is the density/mass function of $T$.  Lastly,
 we have the **cumulative hazard function**, in which we integrate
 $\lambda(t)$ over the interval $[0,t]$, so that
 
@@ -202,8 +193,8 @@ gives the 95% confidence bands. Note the sharp decline until around 8
 two-week intervals, after which rate of declining probability diminishes a
 bit.' %}
 
-Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available.  Define
-$d_j$ to be the number of spell end at time $t_j$, $m_j$ to be the number
+Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available.  Let
+$d_j$ to be the number of spell ending at time $t_j$, let $m_j$ to be the number
 of right-censored spell in the interval $[t_j,t_{j+1})$, and $r_j$ is the number of
 spell that have neither ended or been censored (a quality known as being at
 risk) at time $t_j$. The **Kaplan-Meier** estimate for $S(t)$ is then  
@@ -284,7 +275,9 @@ $h(\boldsymbol{x},\boldsymbol{\beta})$ is a scale factor, where typically
 $h(\boldsymbol{x},\boldsymbol{\beta})=\exp(\boldsymbol{x}^{\small{\prime}}\boldsymbol{\beta})$.
 For example, under the Weibull distribution we have $\lambda_0(t)=$ 
 
-
+<table class='norulers'>
+<tr><td> Hello </td></tr>
+</table>
 
 
 
@@ -391,3 +384,7 @@ regressors <- regressors[regressors != 'tenure']
 ```
 
 
+
+
+
+## Some header

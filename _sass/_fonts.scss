@@ -1,6 +1,14 @@
 @charset "UTF-8";
 
 @font-face {
+  font-family: MinionPro;
+  src: url("../fonts/MinionPro-It.otf") format('opentype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+
+@font-face {
   font-family: Myriad;
   src: url("../fonts/MyriadPro-Regular.otf") format('opentype');
   font-weight: normal;
