@@ -23,6 +23,14 @@
 }
 
 @font-face {
+  font-family: Myriad;
+  src: url("../fonts/MyriadPro-It.otf") format('opentype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+
+@font-face {
   font-family: OperatorMono;
   src: url("../fonts/Operator Mono Medium Regular.ttf") format('truetype');
   font-weight: normal;
@@ -35,27 +43,4 @@
   font-weight: normal;
   font-style: italic;
 }
-
-@font-face {
-  font-family: Lato;
-  src: url("../fonts/Lato-Regular.ttf") format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: Lato;
-  src: url("../fonts/Lato-Bold.ttf") format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: Lato;
-  src: url("../fonts/Lato-Italic.ttf") format('truetype');
-  font-weight: normal;
-  font-style: italic;
-}
-
-
 
