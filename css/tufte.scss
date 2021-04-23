@@ -222,7 +222,7 @@ table.norulers {
 }
 
 table.norulers td {
-    font-size: 10.5px;
+    font-size: 14.0px;
     border-bottom: 0px solid $border-color;
 }
 
@@ -243,12 +243,11 @@ table, table.booktabs {
 
 .booktabs th, th {
     border-bottom: 1px solid $border-color;
-    padding: 0.65ex 0.5em 0.5ex 0.5em;
     font-family: Minion;
+    font-size: 14px;
     font-style: italic;
     font-weight: normal;
-    font-size: 13px;
-    // font-family: Myriad;
+    padding: 0.65ex 0.5em 0.5ex 0.5em;
 }
 
 
@@ -258,6 +257,7 @@ th, td {
     padding-left: 1.0em;
     padding-right: 1.0em;
     border-bottom: 1px solid #ddd;
+    font-size: 14.0px;
 }
 
 th code, td code {
@@ -491,7 +491,7 @@ figcaption.maincolumn-figure code {
     margin-top: 20px;
     display:inline-block;
     padding:10px;
-    font-size: 22px;
+    font-size: 19px;
     font-family: Minion;
     font-style: italic;
 }
