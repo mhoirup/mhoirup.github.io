@@ -11,7 +11,6 @@ nav_exclude: true
     padding: 0;
 }
 
-/* clearfix hack after Cederholm (group class name) */
 .group:after {
     content: "";
     display: table;
@@ -22,22 +21,55 @@ html, body {
     height: 100%; 
 }
 
-html{
+html {
     text-align: baseline;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 0.9rem;
-  }
+    font-size: 11px;
+}
   
-
-// Mathjax fonts need TLC
-.mjx-chtml MJXc-display {
-    font-size: 2.6rem !important;
+body {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 13%;
+    font-family: Myriad;
+    background-color: $bg-color;
+    color: $text-color;
+    max-width: 1400px;
+    counter-reset: sidenote-counter;
 }
 
-// .mjx-math_Display {
-//     font-size: 3.6rem !important;
-// }
+
+h1 {
+    font-weight: 200;
+    font-family: Minion;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 2.5rem;
+    margin-top: 1.5cm;
+    margin-bottom: 1.568rem;
+    font-size: 2.5rem;
+    line-height: 0.784;
+}
+
+h2, h3 {
+    font-family: Minion;
+    font-weight: normal;
+    font-style: italic;
+    margin-top: 1.966666666666667rem;
+    margin-bottom: -0.5rem;
+}
+
+
+h2 {
+    font-size: 2.00rem;
+    line-height: 0.933333333333333;
+}
+
+h3 { 
+    font-size: 1.7rem;
+    line-height: 1.08888888888889; }
 
 .MathJax_Display {
     font-size: 1.4rem !important;
@@ -87,49 +119,6 @@ p > a, cite > a, span > a {
     }
   }
 
-body {
-    width: 85%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 13%;
-    // font-family: Myriad;
-    font-family: Myriad;
-    background-color: $bg-color;
-    color: $text-color;
-    max-width: 1400px;
-    counter-reset: sidenote-counter;
-}
-
-
-h1 {
-    font-weight: 200;
-    font-family: Minion;
-    font-weight: normal;
-    font-style: italic;
-    margin-top: 2.5rem;
-    margin-top: 1.5cm;
-    margin-bottom: 1.568rem;
-    font-size: 2.5rem;
-    line-height: 0.784;
-}
-
-h2, h3 {
-    font-family: Minion;
-    font-weight: normal;
-    font-style: italic;
-    margin-top: 1.966666666666667rem;
-    margin-bottom: -0.5rem;
-}
-
-
-h2 {
-    font-size: 2.00rem;
-    line-height: 0.933333333333333;
-}
-
-h3 { 
-    font-size: 1.7rem;
-    line-height: 1.08888888888889; }
 
 p .subtitle {
     font-style: italic;
