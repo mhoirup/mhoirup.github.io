@@ -10,16 +10,15 @@ failure in engineering, or in this case, unemployment duration. In this
 project we seek to understand the factors affecting the probability of
 returning to the workforce.
 
-{% marginnote 'note1' 'Full code for this analysis can be found on my github
-[here](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).
-Note that the files are split into `imports.R`, `exploratory.R` and
-`analysis.R` to keep some semblance of organisation in the code structure.'%}
-
 {% marginfigure 'fig1' 'assets/unemp/spell_hist.png'
 '**Figure 1**: Distribution of `spell`. A majority of respondents finished their
 unemployment spell prior to 10x2 = 20 week mark, with relatively few
 surpassing 15 two-week intervals.' %}
 
+Full code for this analysis can be found on my github
+[here](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).
+Note that the files are split into `imports.R`, `exploratory.R` and
+`analysis.R` to keep some semblance of organisation in the code structure.
 We begin the analysis by loading the data into our R workspace along with
 the packages we're going to use. The data itself is from [the Ecdat
 package](https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf) and was
@@ -30,6 +29,12 @@ used in McCall (1996).
 `1`s and `0`s into booleans for clarity. Here we note the distribution of
 `censor4` which is of interest; 1.255 observations have been censored,
 while 2.088 observations correspond to completed spells." %}
+
+{% marginnote 'table1' "**Table 1**: Summaries of categorical variables.
+They're all binary variables, although of different data types, i.e.
+boolean or character vectors. For all the `censor` variables we observe
+non-censoring more often than not, while the availability of unemployment
+insurance appears to be evenly split among observations." %}
 
 {% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
 of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
@@ -87,6 +92,8 @@ entered the workforce at the end of the survey.
 As a last step in the introduction, summary statistics are computed for
 each variable using my own `dsummary()` function, the definition of which
 can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
+
+
 
 |Variable  | Type     | N Unique | Modal     | Modal %| NAs  |
 |:---------|:---------|---------:|:----------|-------:|-----:|
@@ -156,7 +163,7 @@ $$
     \lambda(t)=\begin{cases}
     \lim\limits_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
         T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
-        S(t)}{dt}& \text{continuous} \\
+        S(t)}{dt}& \text{for continuous $T$} \\
         \Pr(T=t\mid T\geqslant t) & \text{for discrete $T$}
     \end{cases}
 $$
@@ -275,11 +282,6 @@ $h(\boldsymbol{x},\boldsymbol{\beta})$ is a scale factor, where typically
 $h(\boldsymbol{x},\boldsymbol{\beta})=\exp(\boldsymbol{x}^{\small{\prime}}\boldsymbol{\beta})$.
 For example, under the Weibull distribution we have $\lambda_0(t)=$ 
 
-<table class='norulers'>
-<tr><td> Hello </td></tr>
-</table>
-
-
 
 ### Variate Selection and Model Fitting
 
@@ -384,7 +386,3 @@ regressors <- regressors[regressors != 'tenure']
 ```
 
 
-
-
-
-## Some header
