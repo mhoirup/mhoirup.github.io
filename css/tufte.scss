@@ -25,14 +25,9 @@ html {
     text-align: baseline;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    // font-size: 11pt;
-}
-
-p {
     font-size: 11pt;
-
 }
-  
+
 body {
     width: 85%;
     margin-left: auto;
@@ -135,9 +130,9 @@ p .subtitle {
 }
 
 
-p, ol, ul {
-    font-size: 1.4rem;
-}
+// p, ol, ul {
+//     font-size: 1.4rem;
+// }
 
 p, li {
     line-height: 2rem;
