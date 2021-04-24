@@ -30,16 +30,7 @@ used in McCall (1996).
 `censor4` which is of interest; 1.255 observations have been censored,
 while 2.088 observations correspond to completed spells." %}
 
-{% marginnote 'table1' "**Table 1**: Summaries of categorical variables.
-They're all binary variables, although of different data types, i.e.
-boolean or character vectors. For all the `censor` variables we observe
-non-censoring more often than not, while the availability of unemployment
-insurance appears to be evenly split among observations." %}
 
-{% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
-of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
-A majority of respondents is under 40 years of age, 2.231 in fact, which
-corresponds to 68% of all observations.'  %}
 
 ```R
 library(dplyr)
@@ -59,13 +50,6 @@ head(data)
 
 ```
 
-{% marginfigure 'reprate_hist' "assets/unemp/reprate_hist.png"
-"Distribution of `reprate`. deriving the unique value via
-`length(unique(data$reprate))` actually shows that the variable, with 3.343
-observations, only has 419 unique values, suggesting that the replacement isn't
-necessarily continuous. Without much more info about the rate, and
-considering the relatively large amount of unique values, we're going to
-treat `reprate` as continuous."  %}
 
 Below is a table with a brief description of each variable. In particular,
 note how `spell` give the duration of unemployment in two-week intervals,
@@ -94,6 +78,11 @@ each variable using my own `dsummary()` function, the definition of which
 can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
 
 
+{% marginnote 'tableID-3' "**Table 1**: Summaries of categorical variables.
+They're all binary variables, although of different data types, i.e.
+boolean or character vectors. For all the `censor` variables we observe
+non-censoring more often than not, while the availability of unemployment
+insurance appears to be evenly split among observations." %}
 
 |Variable  | Type     | N Unique | Modal     | Modal %| NAs  |
 |:---------|:---------|---------:|:----------|-------:|-----:|
@@ -112,6 +101,19 @@ can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rp
 |`disrate` |0.00  |0.11  |1.02  |0.07  |    0|
 |`logwage` |2.71  |5.69  |7.60  |0.54  |    0|
 |`tenure`  |0.00  |4.12  |40.00 |5.86  |    0|
+
+{% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
+of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
+A majority of respondents is under 40 years of age, 2.231 in fact, which
+corresponds to 68% of all observations.'  %}
+
+{% marginfigure 'reprate_hist' "assets/unemp/reprate_hist.png"
+"Distribution of `reprate`. deriving the unique value via
+`length(unique(data$reprate))` actually shows that the variable, with 3.343
+observations, only has 419 unique values, suggesting that the replacement isn't
+necessarily continuous. Without much more info about the rate, and
+considering the relatively large amount of unique values, we're going to
+treat `reprate` as continuous."  %}
 
 
 ## Censoring and Flow Sampling
