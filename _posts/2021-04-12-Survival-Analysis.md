@@ -101,21 +101,10 @@ insurance appears to be evenly split among observations." %}
 |`logwage` |`double`  |         |                   |2.71  |5.69  |7.60  |0.54  |
 |`tenure`  |`integer` |         |                   |0.00  |4.11  |40.00 |5.86  |
 
-{% marginfigure 'fig3' 'assets/unemp/rates_density.png' "**Figure 3**: Densities of
-`reprate` and `disrate`." %}
-
 {% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
 of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
 A majority of respondents is under 40 years of age, 2.231 in fact, which
 corresponds to 68% of all observations.'  %}
-
-{% marginfigure 'reprate_hist' "assets/unemp/reprate_hist.png"
-"Distribution of `reprate`. deriving the unique value via
-`length(unique(data$reprate))` actually shows that the variable, with 3.343
-observations, only has 419 unique values, suggesting that the replacement isn't
-necessarily continuous. Without much more info about the rate, and
-considering the relatively large amount of unique values, we're going to
-treat `reprate` as continuous."  %}
 
 ## Censoring and Flow Sampling
 
@@ -133,13 +122,17 @@ typically deal with one of the following censoring mechanisms:
 <tr><td><strong>interval-censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
 </table>
 
-{% maincolumn 'assets/unemp/spell_censor4.png' "`censor4` over the values
+{% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
 a greater chance of an observation being censored, which aligns with the
 conventional wisdom that unemployment is harder to escape the longer one is
 in it, making a spell exceed the sampling period. The correlation
 coefficient between `censor4` and `spell` is 0.31, which adds evidence to
 the previous statement." %}
+
+
+{% marginfigure 'fig3' 'assets/unemp/rates_density.png' "**Figure 5**: Densities of
+`reprate` and `disrate`." %}
 
 {% marginfigure 'logwage_hist' 'assets/unemp/logwage_hist.png' ''  %}
 
