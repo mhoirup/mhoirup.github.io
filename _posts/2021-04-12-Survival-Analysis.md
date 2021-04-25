@@ -15,10 +15,10 @@ returning to the workforce.
 unemployment spell prior to 10x2 = 20 week mark, with relatively few
 surpassing 15 two-week intervals.' %}
 
-Full code for this analysis can be found on my github
-[here](https://github.com/mhoirup/econometric-projects/tree/main/unemployment).
-Note that the files are split into `imports.R`, `exploratory.R` and
-`analysis.R` to keep some semblance of organisation in the code structure.
+Full code can be found on my github at
+[mhoirup/econometric-projects/unemployment](https://github.com/mhoirup/econometric-projects/tree/main/unemployment),
+where files are split into `imports.R`, `exploratory.R` and
+`analysis.R` to keep some semblance of organisation in the project structure.
 We begin the analysis by loading the data into our R workspace along with
 the packages we're going to use. The data itself is from [the Ecdat
 package](https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf) and was
@@ -39,14 +39,21 @@ library(survival)
 library(ggplot2)
 
 data(UnempDur); data <- UnempDur; rm(UnempDur)
-head(data)
-#   spell censor1 censor2 censor3 censor4 age  ui reprate disrate logwage tenure
-# 1     5       1       0       0       0  41  no   0.179   0.045 6.89568      3
-# 2    13       1       0       0       0  30 yes   0.520   0.130 5.28827      6
-# 3    21       1       0       0       0  36 yes   0.204   0.051 6.76734      1
-# 4     3       1       0       0       0  26 yes   0.448   0.112 5.97889      3
-# 5     9       0       0       1       0  22 yes   0.320   0.080 6.31536      0
-# 6    11       0       0       0       1  43 yes   0.187   0.047 6.85435      9
+tibble::as.tibble(data)
+# A tibble: 3,343 x 11
+#    spell censor1 censor2 censor3 censor4   age ui    reprate disrate logwage tenure
+#    <dbl>   <dbl>   <dbl>   <dbl>   <dbl> <dbl> <fct>   <dbl>   <dbl>   <dbl>  <dbl>
+#  1     5       1       0       0       0    41 no      0.179   0.045    6.90      3
+#  2    13       1       0       0       0    30 yes     0.52    0.13     5.29      6
+#  3    21       1       0       0       0    36 yes     0.204   0.051    6.77      1
+#  4     3       1       0       0       0    26 yes     0.448   0.112    5.98      3
+#  5     9       0       0       1       0    22 yes     0.32    0.08     6.32      0
+#  6    11       0       0       0       1    43 yes     0.187   0.047    6.85      9
+#  7     1       0       0       0       0    24 no      0.52    0.13     5.61      1
+#  8     3       1       0       0       0    32 no      0.373   0.093    6.16      0
+#  9     7       1       0       0       0    35 yes     0.52    0.13     5.29      2
+# 10     5       0       0       0       1    31 yes     0.52    0.13     5.29      1
+# … with 3,333 more rows 
 
 ```
 
@@ -84,23 +91,22 @@ boolean or character vectors. For all the `censor` variables we observe
 non-censoring more often than not, while the availability of unemployment
 insurance appears to be evenly split among observations." %}
 
-|Variable  | Type     | N Unique | Modal     | Modal %| NAs  |
-|:---------|:---------|---------:|:----------|-------:|-----:|
-|`censor1` |`logical` |         2| `FALSE`   |   67.90|     0|
-|`censor2` |`logical` |         2| `FALSE`   |   89.86|     0|
-|`censor3` |`logical` |         2| `FALSE`   |   82.83|     0|
-|`censor4` |`logical` |         2| `FALSE`   |   62.46|     0|
-|`ui`      |`factor`  |         2| `'yes'`   |   55.28|     0|
+|Variable  |Type      |N Unique |Most Frequent Value|Min   |Mean  |Max   |SD    |
+|:---------|:---------|--------:|------------------:|-----:|-----:|-----:|-----:|
+|`spell`   |`integer` |         |                   |1.00  |6.25  |28.00 |5.61  |
+|`censor1` |`logical` |2        |  `FALSE` (67.90%) |      |      |      |      |
+|`censor2` |`logical` |2        |  `FALSE` (89.86%) |      |      |      |      |
+|`censor3` |`logical` |2        |  `FALSE` (82.83%) |      |      |      |      |
+|`censor4` |`logical` |2        |  `FALSE` (62.46%) |      |      |      |      |
+|`age`     |`integer` |         |                   |20.00 |35.44 |61.00 |10.64 |
+|`ui`      |`factor`  |2        |  `yes` (55.28%)   |      |      |      |      |
+|`reprate` |`double`  |         |                   |0.07  |0.45  |2.06  |0.11  |
+|`disrate` |`double`  |         |                   |0.00  |0.11  |1.02  |0.07  |
+|`logwage` |`double`  |         |                   |2.71  |5.69  |7.60  |0.54  |
+|`tenure`  |`integer` |         |                   |0.00  |4.11  |40.00 |5.86  |
 
-
-|Variable  |Min   |Mean  |Max.  |SD    | NAs |
-|:---------|-----:|-----:|-----:|:----:|----:|
-|`spell`   |1.00  |6.25  |28.00 |5.61  |    0|
-|`age`     |20.00 |35.44 |61.00 |10.64 |    0|
-|`reprate` |0.07  |0.45  |2.06  |0.11  |    0|
-|`disrate` |0.00  |0.11  |1.02  |0.07  |    0|
-|`logwage` |2.71  |5.69  |7.60  |0.54  |    0|
-|`tenure`  |0.00  |4.12  |40.00 |5.86  |    0|
+{% marginfigure 'fig3' 'assets/unemp/rates_density.png' "**Figure 3**: Densities of
+`reprate` and `disrate`." %}
 
 {% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
 of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
@@ -115,13 +121,18 @@ necessarily continuous. Without much more info about the rate, and
 considering the relatively large amount of unique values, we're going to
 treat `reprate` as continuous."  %}
 
-
 ## Censoring and Flow Sampling
 
-Censoring in the context of survival data is the incomplete measure of a
-spell; a spell may still be ongoing at the time of the measurement, in
-which case we have a censored observation. 
+In the context of survival analysis, censoring refers to the measurement of
+duration that is either still ongoing at the end of measurement
+(**right-censoring** ), had begun before measurement (**left-censoring** ),
+or 
 
+<table class='norulers'>
+<tr><td><strong>Right</strong></td><td>Spell is observed from time 0 until censoring time $c$. Time $t$ is somewhere in the interval $(c,\infty)$.</td></tr>
+<tr><td><strong>Left</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown, but lies somewhere in the interval $(0,c)$.</td></tr>
+<tr><td><strong>Interval</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
+</table>
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "`censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
@@ -154,12 +165,11 @@ $$
     E(T)=\int_{0}^{\infty}[1-F(v)]dv=\int_{0}^{\infty}S(v)dv.
 $$
 
-While $S(t)$ gives the probability of continuing to the subsequent period
-without transition, the **hazard function** $\lambda(t)$ gives the
-probability of transition at period $t$. Here we see the
-terminology's roots within the medical sciences once more, as $\lambda(t)$
-gives the 'hazard' of transitioning from the state of life to the state of
-death. The hazard function is defined as
+While $S(t)$ gives the probability of *not* transitioning at period $t$,
+the **hazard function** $\lambda(t)$ gives the probability of transition at
+period $t$. Here we see the terminology's roots within the medical sciences
+once more, as $\lambda(t)$ gives the 'hazard' of transitioning from the
+state of life to the state of death. The hazard function is defined as
 
 $$
     \lambda(t)=\begin{cases}

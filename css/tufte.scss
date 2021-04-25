@@ -213,6 +213,7 @@ h1 code, h2 code, h3 code {
 
 table.norulers {
     width: auto;
+    width: 53%;
     border-spacing: 0.1rem;
     margin-bottom: 2rem;
     margin-left: 2rem;
@@ -222,7 +223,7 @@ table.norulers {
 }
 
 table.norulers td {
-    font-size: 0.9rem;
+    font-size: 1.0rem;
     border-bottom: 0px solid $border-color;
 }
 
@@ -231,6 +232,11 @@ table.norulers tr code {
     font-family: OperatorMono;
 }
 
+table.norulers tr em {
+    font-size: 1.0rem;
+}
+
+
 table, table.booktabs {
     width: auto;
     border-spacing: 0px;
@@ -238,16 +244,16 @@ table, table.booktabs {
     // margin-top: 1cm;
     // width: 53%;
     font-size: 17px;
+    border-top: 1.5px solid $border-color;
+    border-bottom: 1.5px solid $border-color;
 }
 
-
 .booktabs th, th {
-    border-bottom: 1px solid $border-color;
     font-family: SegoeUI;
     font-size: 1rem;
-    // font-style: italic;
     font-weight: normal;
-    padding: 0.65ex 0.5em 0.5ex 0.5em;
+    padding-bottom: 0.95ex;
+    padding-top: 0.95ex;
 }
 
 
@@ -255,7 +261,7 @@ th, td {
     line-height: 1.71428571;
     padding-left: 1.0em;
     padding-right: 1.0em;
-    border-bottom: 1px solid #ddd;
+    // border-bottom: 1px solid #ddd;
     font-size: 0.9rem;
 }
 
@@ -264,7 +270,12 @@ th code, td code {
 }
 
 .booktabs th.cmid, th {
+    text-align: center;
     border-bottom: 1px solid lighten($border-color, 25%);
+}
+
+.booktabs th.cmid {
+    border-bottom-length: 50px;
 }
 
 .booktabs th.nocmid {
@@ -276,7 +287,7 @@ th code, td code {
 } 
 
 .booktabs tbody tr:last-child td,  tr:last-child td {
-    border-bottom: 0px solid $border-color;
+    padding-bottom: 0.95ex; /* add space between thead row and tbody */
 } 
 
 .booktabs td, td {
