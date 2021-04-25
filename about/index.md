@@ -16,6 +16,6 @@ Code for all my projects is available at <a href="https://github.com/mhoirup/eco
 github.com/mhoirup/econometric-projects</a>, which will be entirely in
 either R or Python (unless I someday switch over to Julia or something). In
 general, I'll try to use R for my analytical projects, while Python is for
-building models from the ground up, which I have to be a good exercise in
+building models from the ground up, which I have found to be a good exercise in
 wrapping my head around the various estimation procedures.
 </p>
