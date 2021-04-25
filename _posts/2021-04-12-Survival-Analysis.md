@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Survial Analysis of Unemployment Data'
-date:   2021-04-21
+date:   2021-04-25
 ---
 
 Survival analysis is the statistical analysis of duration data. Durations
@@ -30,8 +30,6 @@ used in McCall (1996).
 `censor4` which is of interest; 1.255 observations have been censored,
 while 2.088 observations correspond to completed spells." %}
 
-
-
 ```R
 library(dplyr)
 library(Ecdat)
@@ -54,9 +52,7 @@ tibble::as.tibble(data)
 #  9     7       1       0       0       0    35 yes     0.52    0.13     5.29      2
 # 10     5       0       0       0       1    31 yes     0.52    0.13     5.29      1
 # … with 3,333 more rows 
-
 ```
-
 
 Below is a table with a brief description of each variable. In particular,
 note how `spell` give the duration of unemployment in two-week intervals,
@@ -123,15 +119,18 @@ treat `reprate` as continuous."  %}
 
 ## Censoring and Flow Sampling
 
-In the context of survival analysis, censoring refers to the measurement of
-duration that is either still ongoing at the end of measurement
-(**right-censoring** ), had begun before measurement (**left-censoring** ),
-or 
+**Censoring** refers to the inaccurate measurement of the observed duration $t$
+due to the way data is sampled. Different types of censoring exist, which
+is defined by the censoring time $c$, which denote the time at which a
+realisation of the random variable $T$ was sampled. For an observation not
+to be censored we require that $t$ is known, and therefore the implied
+relation $0\leqslant t\leqslant c$. In the survival analysis literature we
+typically deal with one of the following censoring mechanisms:
 
 <table class='norulers'>
-<tr><td><strong>Right</strong></td><td>Spell is observed from time 0 until censoring time $c$. Time $t$ is somewhere in the interval $(c,\infty)$.</td></tr>
-<tr><td><strong>Left</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown, but lies somewhere in the interval $(0,c)$.</td></tr>
-<tr><td><strong>Interval</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
+<tr><td><strong>right-censoring</strong></td><td>Spell is observed from time 0 until censoring time $c$. Time $t$ is unknown and somewhere in the interval $(c,\infty)$.</td></tr>
+<tr><td><strong>left-censoring</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown but somewhere in the interval $(0,c)$.</td></tr>
+<tr><td><strong>interval-censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
 </table>
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "`censor4` over the values
@@ -141,9 +140,6 @@ conventional wisdom that unemployment is harder to escape the longer one is
 in it, making a spell exceed the sampling period. The correlation
 coefficient between `censor4` and `spell` is 0.31, which adds evidence to
 the previous statement." %}
-
-{% marginfigure 'disrate_hist' 'assets/unemp/disrate_hist.png' ''  %}
-
 
 {% marginfigure 'logwage_hist' 'assets/unemp/logwage_hist.png' ''  %}
 
