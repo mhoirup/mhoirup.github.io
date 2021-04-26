@@ -40,6 +40,8 @@ body {
     max-width: 1400px;
     counter-reset: sidenote-counter;
     line-height: 0.0;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 p, a {
@@ -185,16 +187,15 @@ blockquote footer {
 //     letter-spacing: .03em;
 // }
 
-pre, pre code, p code, p pre code {
+pre, pre code, p code, p pre code, .marginnote code, figcaption.maincolumn-figure code {
     // Inline code 
     font-family: OperatorMono;
     font-size: 1rem;
-    // margin-top: 1.71428571rem;
     color: $code-color;
     background-color: #eeeff0;
-    padding-left: 3px;
-    padding-right: 3px;
-    border-radius: 05px;
+    padding-left: 6px;
+    padding-right: 6px;
+    border-radius: 5px;
 }
 
 pre code {
@@ -203,12 +204,11 @@ pre code {
     margin-left: -2rem;
     line-height: 1.6;
     padding: 0.5rem 1rem 0.5rem 1rem;
-    // margin-top: -1.0rem;
     margin-bottom: 0rem;
     color: $code-color;
-    display: inline-block;
     display: block;
     background: $bg-color;
+    background-color: contrast-color;
     
 }
 
@@ -237,10 +237,6 @@ table.norulers td {
     border-bottom: 0px solid $border-color;
 }
 
-
-table.norulers tr code {
-    font-family: OperatorMono;
-}
 
 table.norulers tr em {
     font-size: 1.0rem;
@@ -380,6 +376,12 @@ figure.fullwidth figcaption {
 
 img { max-width: 100%; }
 
+figcaption.maincolumn-figure {
+    max-width: 50%;
+    margin-right: -60%;
+    
+}
+
 .sidenote, .marginnote {
     float: right;
     clear: right;
@@ -516,9 +518,6 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
     font-size: 0.8rem;
 }
 
-figcaption.maincolumn-figure code {
-    font-family: OperatorMono;
-}
 
 /*--- End of Basic Layout stuff from tufte.css ---*/
 

@@ -19,3 +19,5 @@ general, I'll try to use R for my analytical projects, while Python is for
 building models from the ground up, which I have found to be a good exercise in
 wrapping my head around the various estimation procedures.
 </p>
+<!-- <h2 style='width:65%;margin-left:auto;margin-right:auto;padding-right:14%;margin-top:2rem;'>A Quick Note on Notation</h2> -->
+

@@ -22,7 +22,8 @@ where files are split into `imports.R`, `exploratory.R` and
 We begin the analysis by loading the data into our R workspace along with
 the packages we're going to use. The data itself is from [the Ecdat
 package](https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf) and was
-used in McCall (1996).
+used in McCall (1996). The main methodological references are Cameron &
+Trivedi (2005) and Wooldridge (2010).
 
 {% marginfigure 'fig2' 'assets/unemp/censored_hist.png' "**Figure
 2**: Distributions of the four `censor` variables where I've changed the
@@ -75,11 +76,9 @@ entered the workforce at the end of the survey.
 <tr><td><code>tenure</code></td><td>Tenure at lost job.</td></tr>
 </table>
 
-
 As a last step in the introduction, summary statistics are computed for
 each variable using my own `dsummary()` function, the definition of which
 can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
-
 
 {% marginnote 'tableID-3' "**Table 1**: Summaries of categorical variables.
 They're all binary variables, although of different data types, i.e.
@@ -87,19 +86,19 @@ boolean or character vectors. For all the `censor` variables we observe
 non-censoring more often than not, while the availability of unemployment
 insurance appears to be evenly split among observations." %}
 
-|Variable  |Type      |N Unique |Most Frequent Value|Min   |Mean  |Max   |SD    |
-|:---------|:---------|--------:|------------------:|-----:|-----:|-----:|-----:|
-|`spell`   |`integer` |         |                   |1.00  |6.25  |28.00 |5.61  |
-|`censor1` |`logical` |2        |  `FALSE` (67.90%) |      |      |      |      |
-|`censor2` |`logical` |2        |  `FALSE` (89.86%) |      |      |      |      |
-|`censor3` |`logical` |2        |  `FALSE` (82.83%) |      |      |      |      |
-|`censor4` |`logical` |2        |  `FALSE` (62.46%) |      |      |      |      |
-|`age`     |`integer` |         |                   |20.00 |35.44 |61.00 |10.64 |
-|`ui`      |`factor`  |2        |  `yes` (55.28%)   |      |      |      |      |
-|`reprate` |`double`  |         |                   |0.07  |0.45  |2.06  |0.11  |
-|`disrate` |`double`  |         |                   |0.00  |0.11  |1.02  |0.07  |
-|`logwage` |`double`  |         |                   |2.71  |5.69  |7.60  |0.54  |
-|`tenure`  |`integer` |         |                   |0.00  |4.11  |40.00 |5.86  |
+|Variable  |Vector Type|N Unique |Most Frequent Value|Min   |Mean  |Max   |SD    |
+|:---------|:----------|--------:|------------------:|-----:|-----:|-----:|-----:|
+|`spell`   |`integer`  |         |                   |1.00  |6.25  |28.00 |5.61  |
+|`censor1` |`logical`  |2        |  `FALSE` (67.90%) |      |      |      |      |
+|`censor2` |`logical`  |2        |  `FALSE` (89.86%) |      |      |      |      |
+|`censor3` |`logical`  |2        |  `FALSE` (82.83%) |      |      |      |      |
+|`censor4` |`logical`  |2        |  `FALSE` (62.46%) |      |      |      |      |
+|`age`     |`integer`  |         |                   |20.00 |35.44 |61.00 |10.64 |
+|`ui`      |`factor`   |2        |  `yes` (55.28%)   |      |      |      |      |
+|`reprate` |`double`   |         |                   |0.07  |0.45  |2.06  |0.11  |
+|`disrate` |`double`   |         |                   |0.00  |0.11  |1.02  |0.07  |
+|`logwage` |`double`   |         |                   |2.71  |5.69  |7.60  |0.54  |
+|`tenure`  |`integer`  |         |                   |0.00  |4.11  |40.00 |5.86  |
 
 {% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
 of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
@@ -121,6 +120,28 @@ typically deal with one of the following censoring mechanisms:
 <tr><td><strong>left-censoring</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown but somewhere in the interval $(0,c)$.</td></tr>
 <tr><td><strong>interval-censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
 </table>
+
+Define the **censoring mechanism** as $C$, and let $T^\*$ denote the true (as
+in, unaffected by censoring) version of the observed variable $T$. Thus we
+observed the variables
+
+$$
+    \begin{align}
+        T&=\min(T^*,C) \\
+        \delta&=I(T^*>C)
+    \end{align}
+$$
+
+where, in our data loaded into R, `spell` correspond to $T$ and `censor4`
+to $\delta$. For standard survival analysis methods to be valid under the
+presence of censoring, we require $C$ to be independent from $T$, so that,
+if $C\sim D(\boldsymbol{\theta}_{\small C})$ and $T^\*\sim
+D(\boldsymbol{\theta}\_{\small T^\*})$, then $\boldsymbol{\theta}\_{\small
+C}$ is uninformative about $\boldsymbol{\theta}\_{\small T^\*}$, in which
+case we can treat $\delta$ as exogenous and therefore don't have to model $C$.  
+
+
+
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
@@ -282,108 +303,4 @@ function as specified by the distribution, and
 $h(\boldsymbol{x},\boldsymbol{\beta})$ is a scale factor, where typically
 $h(\boldsymbol{x},\boldsymbol{\beta})=\exp(\boldsymbol{x}^{\small{\prime}}\boldsymbol{\beta})$.
 For example, under the Weibull distribution we have $\lambda_0(t)=$ 
-
-
-### Variate Selection and Model Fitting
-
-
-```R
-specification <- function(response, regressors, lhs = NULL, rhs = NULL,
-    polynomials = NULL, intercept = TRUE) {
-    # This function is to ease the tinkering with variables in the model
-    # estimation procedure. Since a string can be converted into an R
-    # formula, manipulating the formula can be boiled down to string
-    # manipulation.
-    # Initiate the formula by concatenating the regressors with '+' and
-    # 'response ~'.
-    spec <- paste(response, '~', paste(regressors, collapse = '+'))
-    # Create any interaction terms where terms are specified by lhs and rhs.
-    if (!is.null(lhs) && !is.null(rhs)) {
-        M <- expand.grid(lhs, rhs)
-        idx <- sapply(seq_len(nrow(M)), function(i) M[i, 1] != M[i, 2])
-        spec <- paste(spec, '+', paste(M[idx, 1], M[idx, 2], sep = ':',
-            collapse = '+'))
-    }
-    # Add to the formula any polynomial terms of order 2.
-    if (!is.null(polynomials)) {
-        spec <- paste(spec, paste(paste0(polynomials, '^2'), collapse = '+'))
-    }
-    # Optional: remove intercept.
-    if (intercept == FALSE) spec <- paste(spec, '-1')
-    as.formula(spec)
-}
-
-spec <- function(x) specification('Surv(spell, censor4 == 0)', x)
-regressors <- names(data)[!grepl('censor|spell', names(data))]
-progress <- data.frame() # Bad practice to fill out a dataframe without
-# specifying its size first, but we don't know how many variables
-# are insignificant.
-
-for (dist in c('weibull', 'exponential', 'lognormal', 'loglogistic', 'coxph')) {
-    covariates <- regressors; reduced <- TRUE
-    while (reduced) {
-        # The 'coxph' isn't really a distribution, but here we simply specify
-        # the Cox model instead if dist == 'coxph'.
-        if (dist == 'coxph') unrestricted <- coxph(spec(covariates), data)
-        else unrestricted <- survreg(spec(covariates), data, dist = dist)
-        # Get the p-values and sort them highest to lowest. Idx gives the
-        # indices in covariates corresponding to the sorted list of p-values.
-        # Also keeps track of the current numbers of rows in progress.
-        cfs <- coeftest(unrestricted); rows <- nrow(progress)
-        pvalues <- cfs[!(rownames(cfs) %in% c('(Intercept)', 'Log(scale)')), 4]
-        idx <- sort(pvalues, index.return = TRUE, decreasing = TRUE)$ix
-        for (var in covariates[idx]) {
-            # Estimate the model without the candiate variate and compute the
-            # p-value for the likelihood ratio test.
-            subset <- covariates[covariates != var]
-            if (dist == 'coxph') restricted <- coxph(spec(subset), data)
-            else restricted <- survreg(spec(subset), data, dist = dist)
-            lr_pvalue <- lmtest::lrtest(unrestricted, restricted)[[5]][2]
-            # Here we check for the percentage change in the remaining
-            # coefficients, with an acceptable limit being at 15% in either
-            # direction.
-            new_params <- restricted$coefficients[-1]
-            params <- unrestricted$coefficients[names(new_params)]
-            differences <- abs(((new_params - params) / params)) * 100
-            dmax <- c(names(which.max(differences)), max(differences))
-            if (lr_pvalue > 0.05 && as.double(dmax[2]) < 15) {
-                covariates <- subset
-                progress <- rbind(progress, data.frame(
-                    dist, var, lr_pvalue, delta_var = dmax[1], delta_p = dmax[2]
-                ))
-                break
-            }
-        }
-        if (rows == nrow(progress)) break
-    }
-    # Finally we print a message which tells us (1) how many variables
-    # are removed, (2) which were removed, and (3) the log-likelihood
-    # of the final specification.
-    nremoved <- length(regressors) - length(covariates)
-    which_removed <- regressors[!(regressors %in% covariates)]
-    message <- paste(dist, 'distribution: removed', nremoved, 'variable(s)',
-        paste0('(', paste(which_removed, collapse = ', '), ').'),
-        '\n negative log-likelihood of final model:',
-        round(logLik(unrestricted), 2), '\n\n')
-    cat(message)
-}
-# weibull distribution: removed 1 variable(s) (tenure). 
-#  negative log-likelihood of final model: -6573 
-# 
-# exponential distribution: removed 1 variable(s) (tenure). 
-#  negative log-likelihood of final model: -6583.05 
-# 
-# lognormal distribution: removed 1 variable(s) (tenure). 
-#  negative log-likelihood of final model: -6338.08 
-# 
-# loglogistic distribution: removed 1 variable(s) (tenure). 
-#  negative log-likelihood of final model: -6378.36 
-# 
-# coxph distribution: removed 1 variable(s) (tenure). 
-#  negative log-likelihood of final model: -15118.03
-
-regressors <- regressors[regressors != 'tenure']
-
-```
-
 
