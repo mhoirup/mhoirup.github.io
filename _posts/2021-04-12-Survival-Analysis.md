@@ -31,6 +31,11 @@ Trivedi (2005) and Wooldridge (2010).
 `censor4` which is of interest; 1.255 observations have been censored,
 while 2.088 observations correspond to completed spells." %}
 
+{% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
+of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
+A majority of respondents is under 40 years of age, 2.231 in fact, which
+corresponds to 68% of all observations.'  %}
+
 ```R
 library(dplyr)
 library(Ecdat)
@@ -80,11 +85,11 @@ As a last step in the introduction, summary statistics are computed for
 each variable using my own `dsummary()` function, the definition of which
 can be found in [my .Rprofile](https://github.com/mhoirup/dotfiles/blob/main/.Rprofile).
 
-{% marginnote 'tableID-3' "**Table 1**: Summaries of categorical variables.
-They're all binary variables, although of different data types, i.e.
-boolean or character vectors. For all the `censor` variables we observe
-non-censoring more often than not, while the availability of unemployment
-insurance appears to be evenly split among observations." %}
+
+{% marginnote 'table1' "**Table 1**: Variable summaries of both numerical
+and categorical variables. Take special note of the distribution of `ui`,
+whether a respondent has unemployment insurance, which appear to be
+somewhat evenly split among observations" %}
 
 |Variable  |Vector Type|N Unique |Most Frequent Value|Min   |Mean  |Max   |SD    |
 |:---------|:----------|--------:|------------------:|-----:|-----:|-----:|-----:|
@@ -100,10 +105,9 @@ insurance appears to be evenly split among observations." %}
 |`logwage` |`double`   |         |                   |2.71  |5.69  |7.60  |0.54  |
 |`tenure`  |`integer`  |         |                   |0.00  |4.11  |40.00 |5.86  |
 
-{% marginfigure 'fig3' 'assets/unemp/age_hist.png' '**Figure 3**: Distribution
-of `age`. Bin width is set at 2 to reduce the number of bars in the graph.
-A majority of respondents is under 40 years of age, 2.231 in fact, which
-corresponds to 68% of all observations.'  %}
+{% marginfigure 'fig4' 'assets/unemp/rates_density.png' "**Figure 4**:
+Densities of `reprate` and `disrate`. " %}
+
 
 ## Censoring and Flow Sampling
 
@@ -138,10 +142,14 @@ presence of censoring, we require $C$ to be independent from $T$, so that,
 if $C\sim D(\boldsymbol{\theta}_{\small C})$ and $T^\*\sim
 D(\boldsymbol{\theta}\_{\small T^\*})$, then $\boldsymbol{\theta}\_{\small
 C}$ is uninformative about $\boldsymbol{\theta}\_{\small T^\*}$, in which
-case we can treat $\delta$ as exogenous and therefore don't have to model $C$.  
+case we can treat $\delta$ as exogenous and therefore don't have to model $C$.
 
-
-
+Multiple censoring mechanisms exists, where the one in this case is assumed
+to be **type 1 censoring**, meaning that the censoring time $c$ is fixed,
+which corresponds to the end of study. This type of censoring is often
+associated with **flow sampling**, where samples are collected within a
+certain interval in which the duration is assumed to begin. Flow sampling
+are often subject to right-censoring.
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
@@ -151,9 +159,6 @@ in it, making a spell exceed the sampling period. The correlation
 coefficient between `censor4` and `spell` is 0.31, which adds evidence to
 the previous statement." %}
 
-
-{% marginfigure 'fig3' 'assets/unemp/rates_density.png' "**Figure 5**: Densities of
-`reprate` and `disrate`." %}
 
 {% marginfigure 'logwage_hist' 'assets/unemp/logwage_hist.png' ''  %}
 
@@ -222,34 +227,35 @@ gives the 95% confidence bands. Note the sharp decline until around 8
 two-week intervals, after which rate of declining probability diminishes a
 bit.' %}
 
-Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available.  Let
-$d_j$ to be the number of spell ending at time $t_j$, let $m_j$ to be the number
-of right-censored spell in the interval $[t_j,t_{j+1})$, and $r_j$ is the number of
-spell that have neither ended or been censored (a quality known as being at
-risk) at time $t_j$. The **Kaplan-Meier** estimate for $S(t)$ is then  
+Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available via the
+**Kaplan-Meier** and **Nelson-Aalen** estimators, respectively. In
+constructing these estimators, we make use of the following variables
+
+<table class='norulers'>
+<tr><td>$d_j$</td><td>The number of completed spells at time $t_j$.</td></tr>
+<tr><td>$m_j$</td><td>The number of right-consored spells in the interval $[t_j,t_{j+1})$.</td></tr>
+<tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored at time $t_j$.</td></tr>
+</table>
+
+Using the sample estimate $\hat{\lambda}(t_j)=d_j/r_j$, we can then derive
+the nonparametric models as
 
 $$
-    \hat{S}(t)=\prod_{j\mid t_j\leqslant
-    t}1-\hat{\lambda}(t_j)=\prod_{j\mid j\leqslant t}\frac{r_j-d_j}{d_j}
-$$
-
-where $\hat{\lambda}(t_j)=d_j/r_j$ is our sample estimate for
-the hazard function. Similarly, a nonparametric specification is available
-for cumulative hazard function via the **Nelson-Aalen** estimator given as 
-
-$$
-    \hat{\Lambda}(y)=\sum_{j\mid y_j\leqslant y}\hat{\lambda}(t_j)=
+    \begin{align}
+    \hat{S}(t)&=\prod_{j\mid t_j\leqslant t}1-\hat{\lambda}(t_j)=
+    \prod_{j\mid j\leqslant t}\frac{r_j-d_j}{d_j} \\
+    \hat{\Lambda}(y)&=\sum_{j\mid y_j\leqslant y}\hat{\lambda}(t_j)=
     \sum_{j\mid y_j\leqslant y }\frac{d_j}{r_j}
+    \end{align}
 $$
 
-Nonparametric estimates are computed in R via
+which we compute in R as
 
 ```R
 # Univariate sample estimates
 uvnonparam <- survfit(Surv(spell, censor4 == 0) ~ 1, data)
 # Multivariate sample estimates stratified by ui
 mvnonparam <- survfit(Surv(spell, censor4 == 0) ~ ui, data)
-
 ```
 
 {% marginfigure 'nelson_aalen' 'assets/unemp/nelson_aalen.png'
