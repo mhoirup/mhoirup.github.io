@@ -106,8 +106,12 @@ somewhat evenly split among observations" %}
 |`tenure`  |`integer`  |         |                   |0.00  |4.11  |40.00 |5.86  |
 
 {% marginfigure 'fig4' 'assets/unemp/rates_density.png' "**Figure 4**:
-Densities of `reprate` and `disrate`. " %}
-
+Densities of `reprate` and `disrate`. As can be seen in table 1, both
+variables are of double type, however, examining their number unique
+values, e.g. `length(unique(data$reprate))`, reveal
+that neither are exactly continuous; `reprate` has 419 unique values while
+`disrate` has 246. The range of both variables is too long to treat them as
+discrete, so we're going to leave them as is." %}
 
 ## Censoring and Flow Sampling
 
@@ -140,8 +144,8 @@ where, in our data loaded into R, `spell` correspond to $T$ and `censor4`
 to $\delta$. For standard survival analysis methods to be valid under the
 presence of censoring, we require $C$ to be independent from $T$, so that,
 if $C\sim D(\boldsymbol{\theta}_{\small C})$ and $T^\*\sim
-D(\boldsymbol{\theta}\_{\small T^\*})$, then $\boldsymbol{\theta}\_{\small
-C}$ is uninformative about $\boldsymbol{\theta}\_{\small T^\*}$, in which
+D(\boldsymbol{\theta}\_{\small T^\*})$, we then have $\boldsymbol{\theta}\_{\small
+C}$ being uninformative about $\boldsymbol{\theta}\_{\small T^\*}$, in which
 case we can treat $\delta$ as exogenous and therefore don't have to model $C$.
 
 Multiple censoring mechanisms exists, where the one in this case is assumed
@@ -159,13 +163,24 @@ in it, making a spell exceed the sampling period. The correlation
 coefficient between `censor4` and `spell` is 0.31, which adds evidence to
 the previous statement." %}
 
+{% marginfigure 'fig5' 'assets/unemp/logwage_hist.png' "**Figure 5**:
+Density of `logwage`. Observations are centred around the 5.5
+mark, with a distribution that appear to be, for the most part, bellshaped." %}
 
-{% marginfigure 'logwage_hist' 'assets/unemp/logwage_hist.png' ''  %}
+{% marginfigure 'fig6' 'assets/unemp/tenure_hist.png' "**Figure 6**:
+Histogram of `tenure`. 2.587 observations, 77% of the data, had a tenure of
+five years or less at their lost job, which is unsurprising, as typically
+less experienced personnel is let of off first." %}
 
 ## Survivor, Hazard and Cumulative Hazard Functions
 
-
-{% marginfigure 'tenure_hist' 'assets/unemp/tenure_hist.png' ''  %}
+{% marginfigure 'fig7' 'assets/unemp/age_tenure.png' "**Figure 7**: Scatter
+plot of `age` over `tenure`. The blue line relates to a fitted LOESS
+regression, which reveal what looks like to be a linear relationship
+between the two. Since such a relation does not violate any assumptions of
+the models used herein, the two variables are for now unchanged, but we
+note how much the combined variability in the two may be adequately
+captured by just one of them." %}
 
 Let $T$ denote our response variable, in this case `spell`. For the
 variable $T$, which quantifies the duration of moving from one state to
@@ -222,34 +237,23 @@ two-week intervals, after which rate of declining probability diminishes a
 bit.' %}
 
 {% marginfigure 'kaplan_meier_mv' 'assets/unemp/kaplan_meier_mv.png'
-'Kaplan-Meier estimator of the survivor function on `spell`. Shaded area
-gives the 95% confidence bands. Note the sharp decline until around 8
-two-week intervals, after which rate of declining probability diminishes a
-bit.' %}
+'' %}
 
 Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available via the
 **Kaplan-Meier** and **Nelson-Aalen** estimators, respectively. In
-constructing these estimators, we make use of the following variables
+constructing these estimators, we make use of the following variables:  
 
 <table class='norulers'>
 <tr><td>$d_j$</td><td>The number of completed spells at time $t_j$.</td></tr>
 <tr><td>$m_j$</td><td>The number of right-consored spells in the interval $[t_j,t_{j+1})$.</td></tr>
-<tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored at time $t_j$.</td></tr>
+<tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored just before time $t_j$, which can be computed as $r_j=\sum_{l\mid l\geqslant j}(d_l+m_l)$.</td></tr>
 </table>
 
 Using the sample estimate $\hat{\lambda}(t_j)=d_j/r_j$, we can then derive
-the nonparametric models as
-
-$$
-    \begin{align}
-    \hat{S}(t)&=\prod_{j\mid t_j\leqslant t}1-\hat{\lambda}(t_j)=
-    \prod_{j\mid j\leqslant t}\frac{r_j-d_j}{d_j} \\
-    \hat{\Lambda}(y)&=\sum_{j\mid y_j\leqslant y}\hat{\lambda}(t_j)=
-    \sum_{j\mid y_j\leqslant y }\frac{d_j}{r_j}
-    \end{align}
-$$
-
-which we compute in R as
+the nonparametric models as $\hat{S}(t)=\prod_{t_j\mid t_j\leqslant
+t}1-\hat{\lambda}(t_j)$ for the Kaplan-Meier estimate of $S(t)$, and
+$\hat{\Lambda}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{\lambda}(t)$ for the
+Nelson-Aalen estimate of $\Lambda(t)$. In R we simply call
 
 ```R
 # Univariate sample estimates
@@ -259,16 +263,10 @@ mvnonparam <- survfit(Surv(spell, censor4 == 0) ~ ui, data)
 ```
 
 {% marginfigure 'nelson_aalen' 'assets/unemp/nelson_aalen.png'
-'Kaplan-Meier estimator of the survivor function on `spell`. Shaded area
-gives the 95% confidence bands. Note the sharp decline until around 8
-two-week intervals, after which rate of declining probability diminishes a
-bit.' %}
+'' %}
 
 {% marginfigure 'nelson_aalen_mv' 'assets/unemp/nelson_aalen_mv.png'
-'Kaplan-Meier estimator of the survivor function on `spell`. Shaded area
-gives the 95% confidence bands. Note the sharp decline until around 8
-two-week intervals, after which rate of declining probability diminishes a
-bit.' %}
+'' %}
 
 While the confidence intervals were readily available in the `survfit`
 object for $\hat{S}(t)$, they must be manually computed for
@@ -280,9 +278,7 @@ chazci <- function(model, alpha = .05) {
     upper <- model$cumhaz * exp(-qnorm(alpha / 2, 0, 1) * model$std.chaz)
     data.frame(lower, upper)
 }
-
 ```
-
 
 ## Semiparametric and Parametric Specifications
 

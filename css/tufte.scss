@@ -200,10 +200,11 @@ pre, pre code, p code, p pre code, .marginnote code, figcaption.maincolumn-figur
 
 pre code {
     // Code blocks
-    font-size: 0.85rem;
+    font-size: 1rem;
     margin-left: -2rem;
     line-height: 1.6;
     padding: 0.5rem 1rem 0.5rem 1rem;
+    margin-top: 1rem;
     margin-bottom: 0rem;
     color: $code-color;
     display: block;
@@ -352,6 +353,7 @@ figure, figure img.maincolumn {
     -webkit-margin-start: 0;
     -webkit-margin-end: 0;
     margin-bottom: 3em;
+    margin-top: 2em;
 }
 
 figcaption {
@@ -379,7 +381,6 @@ img { max-width: 100%; }
 figcaption.maincolumn-figure {
     max-width: 50%;
     margin-right: -60%;
-    
 }
 
 .sidenote, .marginnote {
