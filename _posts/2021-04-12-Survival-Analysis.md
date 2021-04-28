@@ -129,30 +129,22 @@ typically deal with one of the following censoring mechanisms:
 <tr><td><strong>interval-<br>censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
 </table>
 
-Define the **censoring mechanism** as $C$, and let $T^\*$ denote the true (as
-in, unaffected by censoring) version of the observed variable $T$. Thus we
-observed the variables
+Define the **censoring mechanism** as $C$, and let $T^\*$ denote the true
+(as in, unaffected by censoring) version of the observed variable $T$. In
+our sample we thus observe the (potentially) censored $T=\min(T^\*, C)$, as
+well as a censoring indicator $\delta=I(T^\*<C)$, which equals 1 if the
+observation has *not* been censored and 0 otherwise. For standard survial
+analysis methods to be valid under the presence of censoring, we require
+that $C$ is independent of $T^\*$, i.e. the parameters of the distribution
+of $C$ are uninformative about the parameters of the distribution of $T^\*$.  
 
-$$
-    \begin{align}
-        T&=\min(T^*,C) \\
-        \delta&=I(T^*<C)
-    \end{align}
-$$
-
-For standard survival analysis methods to be valid under the presence of
-censoring, we require $C$ to be independent from $T$, so that, if $C\sim
-D(\boldsymbol{\theta}_{\small C})$ and $T^\*\sim
-D(\boldsymbol{\theta}\_{\small T^\*})$, we then have
-$\boldsymbol{\theta}\_{\small C}$ being uninformative about
-$\boldsymbol{\theta}\_{\small T^\*}$, in which case we can treat $\delta$
-as exogenous and therefore don't have to model $C$.
-
-Multiple censoring mechanisms exists, where the one in this case is assumed
-to be **type I censoring**, where we have a fixed $C=c$ for all $t$ (end of
-the survey), and therefore $\Pr(T\geqslant t\mid \delta = 0)=\Pr(T\geqslant
-t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$, a property of all independent
-censoring mechanisms.
+Multiple censoring mechanisms exists, with the type of mechanism depending
+on the way the sampling is carried. In this case we have **type I**
+censoring, whereby $C$ is effectively a fixed value, namely the time the
+survey ends. Due to the fixed $C$ for all $t$, we have $\Pr(T\geqslant
+t\mid \delta = 0)=\Pr(T\geqslant t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$,
+a proporty of all independent censoring mechanisms, which allows us to
+treat $\delta$ as exogenous, meaning we don't have to model $C$. 
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
@@ -229,14 +221,17 @@ states as time goes on.
 
 ## Nonparametric Models
 
-{% marginfigure 'kaplan_meier' 'assets/unemp/kaplan_meier.png'
-'Kaplan-Meier estimator of the survivor function on `spell`. Shaded area
-gives the 95% confidence bands. Note the sharp decline until around 8
-two-week intervals, after which rate of declining probability diminishes a
-bit.' %}
+{% marginfigure 'fig8' 'assets/unemp/kaplan_meier.png' "**Figure 8**:
+Kaplan-Meier estimator on `spell`, with the shaded
+area giving the 95% confidence interval. Note the sharp decline until around
+the 7x2 = 14 week mark, after which the rate of decline in 'survival'
+appear to diminishe a bit." %}
 
-{% marginfigure 'kaplan_meier_mv' 'assets/unemp/kaplan_meier_mv.png'
-'' %}
+{% marginfigure 'fig9' 'assets/unemp/kaplan_meier_mv.png' "**Figure 9**:
+Kaplan-Meier estimator on `stratified` by `ui`, with shaded area giving the
+95% confidence interval. Unsurprisingly, those who have unemployment
+insurance are more likely to stay unemployment than those without, as the
+financial burden of unemployment is alleviated." %}
 
 Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available via the
 **Kaplan-Meier** and **Nelson-Aalen** estimators, respectively. In
@@ -248,16 +243,13 @@ constructing these estimators, we make use of the following variables:
 <tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored just before time $t_j$, which can be computed as $r_j=\sum_{l\mid l\geqslant j}(d_l+m_l)$.</td></tr>
 </table>
 
-Using the sample estimate $\hat{\lambda}(t_j)=d_j/r_j$, we can then derive
-the nonparametric models as
-
-$$
-    \hat{S}(t)=\prod_{t_j\mid t_j\leqslant t}1-\hat{\lambda}(t_j), \qquad
-    \hat{\Lambda}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{\lambda}(t)
-
-$$
-
-which call in R simply as
+Using the sample estimate of the hazard function
+$\hat{\lambda}(t_j)=d_j/r_j$, we can then derive the nonparametric models
+as $\hat{S}(t)=\prod_{t_j\mid t_j\leqslant t}1-\hat{\lambda}(t_j)$ for the
+Kaplan-Meier estimate of the survivor function, and
+$\hat{\Lambda}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{\lambda}(t_j)$ for the
+Nelson-Aalen estimate of the cumulative hazard. Their estimation in R is
+pretty straightforward:
 
 ```R
 # Univariate sample estimates
