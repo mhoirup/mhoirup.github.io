@@ -595,6 +595,16 @@ ul.footer-links li{
 
 //Full width page styling stuff
 
+.hangingindent {
+    // padding-left: 22px ;
+    text-indent: -22px ;
+    margin-left: auto;
+    margin-right: auto;
+    width: 55% !important;
+    padding-right: 11%;
+}
+
+
 body.full-width {
     width: 85%;
     margin-left: auto;
