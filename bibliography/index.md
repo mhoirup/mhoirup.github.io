@@ -3,7 +3,7 @@ layout: full-width
 title: Bibliography
 ---
 
-<p style='width:65%;margin-left:auto;margin-right:auto;padding-right:14%;line-height:2.5rem;'>
+<p style='width:75%;margin-left:auto;margin-right:auto;padding-right:14%;line-height:2.5rem;'>
 Cameron, A. C. and Trivedi, P. K. (2005). Microeconometrics: Methods and Applications (1st ed.). Cambridge University Press. 
 <br>
 Hamilton, J. D. (1994). Time Series Analysis (1st ed.). Princeton University Press. 

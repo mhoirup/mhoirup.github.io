@@ -64,6 +64,10 @@ h1 {
     line-height: 0.784;
 }
 
+h1 code {
+    font-family: OperatorMono;
+}
+
 h2, h3 {
     // font-family: Minion;
     // font-weight: normal;
@@ -223,9 +227,9 @@ li code {
 }
 
 
-h1 code, h2 code, h3 code {
-    font-size: 0.80em;
-}
+// h1 code, h2 code, h3 code {
+//     font-size: 0.80em;
+// }
 
 table.norulers {
     width: auto;
