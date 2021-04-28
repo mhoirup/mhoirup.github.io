@@ -560,10 +560,10 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
     display:inline-block;
     padding:10px;
     // font-size: 1.2rem;
-    // font-family: Minion;
-    // font-style: italic;
-    font-family: StudioFeixenSans;
-    font-style: normal;
+    font-family: Minion;
+    font-style: italic;
+    // font-family: StudioFeixenSans;
+    // font-style: normal;
     font-size: 1.0rem;
     // margin-left: auto;
     // margin-right: auto;
@@ -645,13 +645,9 @@ li.listing hr{
 }
 .listing, .listing h3 {
     display: inline-block;
-    margin:0;
-    // font-family: OperatorMono;
+    margin: 0;
     font-family: Minion;
     font-style: italic;
-    // font-family: StudioFeixenSans;
-    color: $text-color;
-    // font-style: normal;
     font-weight: normal;
     font-size: 1.6rem;
 }
