@@ -565,6 +565,8 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
     font-family: StudioFeixenSans;
     font-style: normal;
     font-size: 1.0rem;
+    // margin-left: auto;
+    // margin-right: auto;
 }
 
 ul.footer-links, .credits{
@@ -602,7 +604,9 @@ ul.footer-links li{
     margin-right: auto;
     width: 55% !important;
     padding-right: 11%;
-    margin-bottom: -0.5rem;
+    margin-bottom: -0.8rem;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 
