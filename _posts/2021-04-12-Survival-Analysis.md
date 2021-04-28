@@ -91,8 +91,8 @@ and categorical variables. Take special note of the distribution of `ui`,
 whether a respondent has unemployment insurance, which appear to be
 somewhat evenly split among observations" %}
 
-|Variable  |Vector Type|N Unique |Most Frequent Value|Min   |Mean  |Max   |SD    |
-|:---------|:----------|--------:|------------------:|-----:|-----:|-----:|-----:|
+|Variable  |Vector Type|N Unique |Modal |Min   |Mean  |Max   |SD    |
+|:---------|:----------|--------:|:-----------------:|-----:|-----:|-----:|-----:|
 |`spell`   |`integer`  |         |                   |1.00  |6.25  |28.00 |5.61  |
 |`censor1` |`logical`  |2        |  `FALSE` (67.90%) |      |      |      |      |
 |`censor2` |`logical`  |2        |  `FALSE` (89.86%) |      |      |      |      |
@@ -113,7 +113,7 @@ that neither are exactly continuous; `reprate` has 419 unique values while
 `disrate` has 246. The range of both variables is too long to treat them as
 discrete, so we're going to leave them as is." %}
 
-## Censoring and Flow Sampling
+## Censoring Mechanisms
 
 **Censoring** refers to the inaccurate measurement of the observed duration $t$
 due to the way data is sampled. Different types of censoring exist, which
@@ -124,9 +124,9 @@ relation $0\leqslant t\leqslant c$. In the survival analysis literature we
 typically deal with one of the following censoring mechanisms:
 
 <table class='norulers'>
-<tr><td><strong>right-censoring</strong></td><td>Spell is observed from time 0 until censoring time $c$. Time $t$ is unknown and somewhere in the interval $(c,\infty)$.</td></tr>
-<tr><td><strong>left-censoring</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown but somewhere in the interval $(0,c)$.</td></tr>
-<tr><td><strong>interval-censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
+<tr><td><strong>right-<br>censoring</strong></td><td>Spell is observed from time 0 until censoring time $c$. Time $t$ is unknown and somewhere in the interval $(c,\infty)$.</td></tr>
+<tr><td><strong>left-<br>censoring</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown but somewhere in the interval $(0,c)$.</td></tr>
+<tr><td><strong>interval-<br>censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
 </table>
 
 Define the **censoring mechanism** as $C$, and let $T^\*$ denote the true (as
@@ -136,24 +136,23 @@ observed the variables
 $$
     \begin{align}
         T&=\min(T^*,C) \\
-        \delta&=I(T^*>C)
+        \delta&=I(T^*<C)
     \end{align}
 $$
 
-where, in our data loaded into R, `spell` correspond to $T$ and `censor4`
-to $\delta$. For standard survival analysis methods to be valid under the
-presence of censoring, we require $C$ to be independent from $T$, so that,
-if $C\sim D(\boldsymbol{\theta}_{\small C})$ and $T^\*\sim
-D(\boldsymbol{\theta}\_{\small T^\*})$, we then have $\boldsymbol{\theta}\_{\small
-C}$ being uninformative about $\boldsymbol{\theta}\_{\small T^\*}$, in which
-case we can treat $\delta$ as exogenous and therefore don't have to model $C$.
+For standard survival analysis methods to be valid under the presence of
+censoring, we require $C$ to be independent from $T$, so that, if $C\sim
+D(\boldsymbol{\theta}_{\small C})$ and $T^\*\sim
+D(\boldsymbol{\theta}\_{\small T^\*})$, we then have
+$\boldsymbol{\theta}\_{\small C}$ being uninformative about
+$\boldsymbol{\theta}\_{\small T^\*}$, in which case we can treat $\delta$
+as exogenous and therefore don't have to model $C$.
 
 Multiple censoring mechanisms exists, where the one in this case is assumed
-to be **type 1 censoring**, meaning that the censoring time $c$ is fixed,
-which corresponds to the end of study. This type of censoring is often
-associated with **flow sampling**, where samples are collected within a
-certain interval in which the duration is assumed to begin. Flow sampling
-are often subject to right-censoring.
+to be **type I censoring**, where we have a fixed $C=c$ for all $t$ (end of
+the survey), and therefore $\Pr(T\geqslant t\mid \delta = 0)=\Pr(T\geqslant
+t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$, a property of all independent
+censoring mechanisms.
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
@@ -250,10 +249,15 @@ constructing these estimators, we make use of the following variables:
 </table>
 
 Using the sample estimate $\hat{\lambda}(t_j)=d_j/r_j$, we can then derive
-the nonparametric models as $\hat{S}(t)=\prod_{t_j\mid t_j\leqslant
-t}1-\hat{\lambda}(t_j)$ for the Kaplan-Meier estimate of $S(t)$, and
-$\hat{\Lambda}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{\lambda}(t)$ for the
-Nelson-Aalen estimate of $\Lambda(t)$. In R we simply call
+the nonparametric models as
+
+$$
+    \hat{S}(t)=\prod_{t_j\mid t_j\leqslant t}1-\hat{\lambda}(t_j), \qquad
+    \hat{\Lambda}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{\lambda}(t)
+
+$$
+
+which call in R simply as
 
 ```R
 # Univariate sample estimates

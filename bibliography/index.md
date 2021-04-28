@@ -7,6 +7,8 @@ Cameron, A. C. & Trivedi, P. K. (2005). *Microeconometrics: Methods and Applicat
 
 Hamilton, J. D. (1994). *Time Series Analysis* (1st ed.). Princeton University Press. 
 
+Harrington, D. P. & Fleming, T. R. (1982). "A class of rank test procedures for censored survival data". *Biometrika* 69, 553-566
+
 McCall, B. P. (1996) “Unemployment Insurance Rules, Joblessness, and Part-time Work”, *Econometrica*, 64, 647–682.
 
 Wooldrige, J. M. (2010). *Econometric Analysis of Cross Section and Panel Data* (2nd ed.). The MIT Press.

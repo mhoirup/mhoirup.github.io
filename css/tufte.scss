@@ -35,13 +35,14 @@ body {
     margin-right: auto;
     padding-left: 13%;
     font-family: SegoeUI;
+    font-family: StudioFeixenSans;
     background-color: $bg-color;
     color: $text-color;
     max-width: 1400px;
     counter-reset: sidenote-counter;
     line-height: 0.0;
-    text-align: justify;
-    text-justify: inter-word;
+    // text-align: justify;
+    // text-justify: inter-word;
 }
 
 p, a {
@@ -51,8 +52,10 @@ p, a {
 
 h1 {
     font-weight: 200;
-    font-family: Minion;
-    font-weight: normal;
+    // font-family: Minion;
+    // font-weight: normal;
+    font-family: StudioFeixenSans;
+    font-weight: bold;
     // font-style: italic;
     margin-top: 2.5rem;
     margin-top: 1.5cm;
@@ -62,8 +65,10 @@ h1 {
 }
 
 h2, h3 {
-    font-family: Minion;
-    font-weight: normal;
+    // font-family: Minion;
+    // font-weight: normal;
+    font-family: StudioFeixenSans;
+    font-weight: bold;
     // font-style: italic;
     margin-top: 3rem;
     margin-bottom: -0.5rem;
@@ -248,8 +253,6 @@ table, table.booktabs {
     width: auto;
     border-spacing: 0px;
     margin-bottom: 2rem;
-    // margin-top: 1cm;
-    // width: 53%;
     font-size: 17px;
     border-top: 1.5px solid $border-color;
     border-bottom: 1.5px solid $border-color;
@@ -257,6 +260,7 @@ table, table.booktabs {
 
 .booktabs th, th {
     font-family: SegoeUI;
+    font-family: StudioFeixenSans;
     font-size: 1rem;
     font-weight: normal;
     padding-bottom: 0.95ex;
@@ -266,6 +270,7 @@ table, table.booktabs {
 
 th, td {
     line-height: 1.71428571;
+    font-family: SegoeUI;
     padding-left: 1.0em;
     padding-right: 1.0em;
     // border-bottom: 1px solid #ddd;
@@ -528,6 +533,7 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
 .smaller {
     font-size: 0.9rem;
     font-family: SegoeUI;
+    font-family: StudioFeixenSans;
     font-style: normal;
 }
 
@@ -549,9 +555,12 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
     margin-top: 1rem;
     display:inline-block;
     padding:10px;
-    font-size: 1.2rem;
-    font-family: Minion;
-    font-style: italic;
+    // font-size: 1.2rem;
+    // font-family: Minion;
+    // font-style: italic;
+    font-family: StudioFeixenSans;
+    font-style: normal;
+    font-size: 1.0rem;
 }
 
 ul.footer-links, .credits{
@@ -599,6 +608,7 @@ body.full-width {
 .full-width article p {
     width: 89%;
     font-family: SegoeUI;
+    font-family: StudioFeixenSans;
     font-style: normal;
 }
 
@@ -618,8 +628,11 @@ li.listing hr{
     display: inline-block;
     margin:0;
     // font-family: OperatorMono;
-    font-family: Minion;
-    font-style: italic;
+    // font-family: Minion;
+    // font-style: italic;
+    font-family: StudioFeixenSans;
+    font-style: normal;
+    font-weight: normal;
     font-size: 1.6rem;
 }
 
