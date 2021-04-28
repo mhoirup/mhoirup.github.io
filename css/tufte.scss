@@ -647,10 +647,11 @@ li.listing hr{
     display: inline-block;
     margin:0;
     // font-family: OperatorMono;
-    // font-family: Minion;
-    // font-style: italic;
-    font-family: StudioFeixenSans;
-    font-style: normal;
+    font-family: Minion;
+    font-style: italic;
+    // font-family: StudioFeixenSans;
+    color: $text-color;
+    // font-style: normal;
     font-weight: normal;
     font-size: 1.6rem;
 }
