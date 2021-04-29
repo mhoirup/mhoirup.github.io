@@ -180,11 +180,8 @@ survivor function is related to the CDF as $S(t)=1-F(t)$, and thus gives
 the probability of continuing in the state from $t_j$ to $t_{j+1}$. Since
 $S(t)$ is monotonically declining, we have $\lim_{t\to\infty}S(t)=0$ under
 the assumption that spells ultimately do end. From $S(t)$, we can obtain
-$E(T)$ as the area under the survival curve:
-
-$$
-    E(T)=\int_{0}^{\infty}[1-F(v)]dv=\int_{0}^{\infty}S(v)dv.
-$$
+$E(T)$ as the area under the survival curve as
+$E(T)=\int_{0}^{\infty}S(u)du$. 
 
 While $S(t)$ gives the probability of *not* transitioning at period $t$,
 the **hazard function** $\lambda(t)$ gives the probability of transition at
@@ -208,7 +205,7 @@ $\lambda(t)$ over the interval $[0,t]$, so that
 
 $$
     \Lambda(t)=\begin{cases}
-    \int_{0}^{t}\lambda(v)dv& \text{for continuous }T \\
+    \int_{0}^{t}\lambda(u)du& \text{for continuous }T \\
     \sum_{j\mid t_j\leqslant t}^{} \lambda(t_j)& \text{for discrete $T$}
     \end{cases}
 $$
@@ -286,19 +283,38 @@ log-logistic distribution. Only the exponential and Weibull distributions
 can be used for the **proportional hazard** (PH) model, while all can be used
 for the **accelerated failure time** (AFT) model.
 
-### Proportional Hazard Models
+### Parametric Distributions for Survial Analysis
 
-The PH model formulates $\lambda(t\mid \boldsymbol{x})$ as factored into
-separate functions 
+<!-- <div style:'text-weight: bold'>Hello</div> -->
+<span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Exponential</span>
+Assuming that $T\sim \text{Exp}(\lambda)$, we have the constant hazard
+$\lambda(t)=\lambda$, and therefore $S(t)=\exp(-\lambda t)$ and
+$f(t)=\lambda\exp(-\lambda t)$. Additionally, we have $E(T)=1/\lambda$ and
+$\text{Var}(T)=1/\lambda^2$. 
+
+<span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Weibull</span>
+Assuming that $T\sim W(\lambda,p)$, we have the hazard
+$\lambda(t)=\lambda^ppt^{p-1}$, the survivor function $S(t)=\exp[-(\lambda
+t)^p]$ and cumulative hazard $\Lambda(t)=(\lambda t)^p$. The Weibull
+distribution is closely related to the exponential distribution, since, if
+$T\sim W(\lambda,p)$ then $T^p\sim \text{Exp}(\lambda)$.  
+
+<span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Log-normal</span>
+Assuming that $T\sim \text{Lognormal}(\mu,\sigma^2)$, we have the survivor
+function $S(t)=1-\Phi[(\ln t-\mu)/\sigma]$ with hazard 
 
 $$
-    \lambda(t\mid \boldsymbol{x})=\lambda_0(t)
-    h(\boldsymbol{x},\boldsymbol{\beta})
+    \lambda(t)=\frac{\exp[-(\ln
+    t-\mu)^2/2\sigma^2]}{t\sigma\sqrt{2\pi}[1-\Phi((\ln t-\mu)/\sigma)]}
 $$
 
-where $\lambda_0(t)$ is the **baseline hazard**, that is, the hazard
-function as specified by the distribution, and
-$h(\boldsymbol{x},\boldsymbol{\beta})$ is a scale factor, where typically
-$h(\boldsymbol{x},\boldsymbol{\beta})=\exp(\boldsymbol{x}^{\small{\prime}}\boldsymbol{\beta})$.
-For example, under the Weibull distribution we have $\lambda_0(t)=$ 
+
+### Accelerated Failure Time Models
+
+In the AFT models framework, we construct a specification for $\ln T$ of
+the form $\ln T=\boldsymbol{x}\boldsymbol{\beta}+u$, where $u$ is an error
+term. In the AFT model, the choice of distribution directly relates to the
+distribution of $u$; under our selected distributions, exponential, Weibull,
+log-normal and log-logistic, $u$ will be distributed as extreme-value,
+extreme-value, normal and logistic, respectively.
 
