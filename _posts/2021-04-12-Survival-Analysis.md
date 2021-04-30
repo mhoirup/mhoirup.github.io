@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Survial Analysis of Unemployment Data'
+title:  'Survival Analysis of Unemployment Data'
 date:   2021-04-25
 ---
 
@@ -133,7 +133,7 @@ Define the **censoring mechanism** as $C$, and let $T^\*$ denote the true
 (as in, unaffected by censoring) version of the observed variable $T$. In
 our sample we thus observe the (potentially) censored $T=\min(T^\*, C)$, as
 well as a censoring indicator $\delta=I(T^\*<C)$, which equals 1 if the
-observation has *not* been censored and 0 otherwise. For standard survial
+observation has *not* been censored and 0 otherwise. For standard survival
 analysis methods to be valid under the presence of censoring, we require
 that $C$ is independent of $T^\*$, i.e. the parameters of the distribution
 of $C$ are uninformative about the parameters of the distribution of $T^\*$.  
@@ -143,7 +143,7 @@ on the way the sampling is carried. In this case we have **type I**
 censoring, whereby $C$ is effectively a fixed value, namely the time the
 survey ends. Due to the fixed $C$ for all $t$, we have $\Pr(T\geqslant
 t\mid \delta = 0)=\Pr(T\geqslant t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$,
-a proporty of all independent censoring mechanisms, which allows us to
+a property of all independent censoring mechanisms, which allows us to
 treat $\delta$ as exogenous, meaning we don't have to model $C$. 
 
 {% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
@@ -156,7 +156,7 @@ the previous statement." %}
 
 {% marginfigure 'fig5' 'assets/unemp/logwage_hist.png' "**Figure 5**:
 Density of `logwage`. Observations are centred around the 5.5
-mark, with a distribution that appear to be, for the most part, bellshaped." %}
+mark, with a distribution that appear to be, for the most part, bell shaped." %}
 
 {% marginfigure 'fig6' 'assets/unemp/tenure_hist.png' "**Figure 6**:
 Histogram of `tenure`. 2.587 observations, 77% of the data, had a tenure of
@@ -222,7 +222,7 @@ states as time goes on.
 Kaplan-Meier estimator on `spell`, with the shaded
 area giving the 95% confidence interval. Note the sharp decline until around
 the 7x2 = 14 week mark, after which the rate of decline in 'survival'
-appear to diminishe a bit." %}
+appear to diminish a bit." %}
 
 {% marginfigure 'fig9' 'assets/unemp/kaplan_meier_mv.png' "**Figure 9**:
 Kaplan-Meier estimator on `stratified` by `ui`, with shaded area giving the
@@ -236,7 +236,7 @@ constructing these estimators, we make use of the following variables:
 
 <table class='norulers'>
 <tr><td>$d_j$</td><td>The number of completed spells at time $t_j$.</td></tr>
-<tr><td>$m_j$</td><td>The number of right-consored spells in the interval $[t_j,t_{j+1})$.</td></tr>
+<tr><td>$m_j$</td><td>The number of right-censored spells in the interval $[t_j,t_{j+1})$.</td></tr>
 <tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored just before time $t_j$, which can be computed as $r_j=\sum_{l\mid l\geqslant j}(d_l+m_l)$.</td></tr>
 </table>
 
@@ -283,7 +283,7 @@ log-logistic distribution. Only the exponential and Weibull distributions
 can be used for the **proportional hazard** (PH) model, while all can be used
 for the **accelerated failure time** (AFT) model.
 
-### Parametric Distributions for Survial Analysis
+### Parametric Distributions for Survival Analysis
 
 <!-- <div style:'text-weight: bold'>Hello</div> -->
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Exponential</span>
