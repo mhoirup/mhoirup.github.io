@@ -309,12 +309,28 @@ $$
 $$
 
 
+### Proportional Hazard Models
+
+In PH models we assume that the effect of the covariates $\boldsymbol{x}$
+affect the conditional hazard $\lambda(t,\boldsymbol{x})$ by a proportional
+amount for each $t$. The PH model is a specification of the form 
+
+$$
+    \lambda(t,\boldsymbol{x})=\lambda_0(t)\exp(\boldsymbol{x}^{\small{\prime}}
+    \boldsymbol{\beta})
+$$
+
+where $\lambda_0(t)$ is the *baseline hazard*, that is, the reference of a
+an obervation with $\boldsymbol{x}\equiv \boldsymbol{0}$ (i.e. common for
+all $t$), and $\exp(\boldsymbol{x}\boldsymbol{\beta})$ give the *relative
+risk* associated with $\boldsymbol{x}$. 
+
+
 ### Accelerated Failure Time Models
 
-In the AFT models framework, we construct a specification for $\ln T$ of
-the form $\ln T=\boldsymbol{x}\boldsymbol{\beta}+u$, where $u$ is an error
-term. In the AFT model, the choice of distribution directly relates to the
-distribution of $u$; under our selected distributions, exponential, Weibull,
-log-normal and log-logistic, $u$ will be distributed as extreme-value,
-extreme-value, normal and logistic, respectively.
+With AFT models we construct a specification for $\ln T$ of the form $\ln
+T=\boldsymbol{x}\boldsymbol{\beta} + u$, where $u$ is an error term whose
+distribution depends on the choice of distribution of  
+
+
 
