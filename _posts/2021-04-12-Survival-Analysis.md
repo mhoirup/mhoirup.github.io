@@ -225,7 +225,7 @@ the 7x2 = 14 week mark, after which the rate of decline in 'survival'
 appear to diminish a bit." %}
 
 {% marginfigure 'fig9' 'assets/unemp/kaplan_meier_mv.png' "**Figure 9**:
-Kaplan-Meier estimator on `stratified` by `ui`, with shaded area giving the
+Kaplan-Meier estimator on `spell` stratified by `ui`, with shaded area giving the
 95% confidence interval. Unsurprisingly, those who have unemployment
 insurance are more likely to stay unemployment than those without, as the
 financial burden of unemployment is alleviated." %}
@@ -311,19 +311,22 @@ $$
 
 ### Proportional Hazard Models
 
-In PH models we assume that the effect of the covariates $\boldsymbol{x}$
-affect the conditional hazard $\lambda(t,\boldsymbol{x})$ by a proportional
-amount for each $t$. The PH model is a specification of the form 
+In PH models we seek to estimate the conditional hazard $\lambda(t\mid
+\boldsymbol{x})$, under the assumption that $\boldsymbol{x}$ affects
+the hazard by a proportional amount for each $t$.
+Under this assumption, we have specify $\lambda(t\mid \boldsymbol{x})$ as
+being of the form
 
 $$
     \lambda(t,\boldsymbol{x})=\lambda_0(t)\exp(\boldsymbol{x}^{\small{\prime}}
     \boldsymbol{\beta})
 $$
 
-where $\lambda_0(t)$ is the *baseline hazard*, that is, the reference of a
-an obervation with $\boldsymbol{x}\equiv \boldsymbol{0}$ (i.e. common for
-all $t$), and $\exp(\boldsymbol{x}\boldsymbol{\beta})$ give the *relative
-risk* associated with $\boldsymbol{x}$. 
+where $\lambda_0(t)$ is the *baseline hazard*, that is, the hazard for a
+reference group where $\boldsymbol{x}\equiv \boldsymbol{0}$ (i.e. common
+for all $t$), and $\exp(\boldsymbol{x}\boldsymbol{\beta})$ give the
+*relative risk* associated with $\boldsymbol{x}$. The assumed distribution
+thus directly relates to $\lambda_0(t)$, which  
 
 
 ### Accelerated Failure Time Models
