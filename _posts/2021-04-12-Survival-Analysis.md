@@ -91,19 +91,21 @@ and categorical variables. Take special note of the distribution of `ui`,
 whether a respondent has unemployment insurance, which appear to be
 somewhat evenly split among observations" %}
 
-|Variable  |Vector Type|N Unique |Modal |Min   |Mean  |Max   |SD    |
-|:---------|:----------|--------:|:-----------------:|-----:|-----:|-----:|-----:|
-|`spell`   |`integer`  |         |                   |1.00  |6.25  |28.00 |5.61  |
-|`censor1` |`logical`  |2        |  `FALSE` (67.90%) |      |      |      |      |
-|`censor2` |`logical`  |2        |  `FALSE` (89.86%) |      |      |      |      |
-|`censor3` |`logical`  |2        |  `FALSE` (82.83%) |      |      |      |      |
-|`censor4` |`logical`  |2        |  `FALSE` (62.46%) |      |      |      |      |
-|`age`     |`integer`  |         |                   |20.00 |35.44 |61.00 |10.64 |
-|`ui`      |`factor`   |2        |  `yes` (55.28%)   |      |      |      |      |
-|`reprate` |`double`   |         |                   |0.07  |0.45  |2.06  |0.11  |
-|`disrate` |`double`   |         |                   |0.00  |0.11  |1.02  |0.07  |
-|`logwage` |`double`   |         |                   |2.71  |5.69  |7.60  |0.54  |
-|`tenure`  |`integer`  |         |                   |0.00  |4.11  |40.00 |5.86  |
+<table class='norulers' style='width:51%;'>
+<tr><th>Variable</th><th>Type</th><th>N Unique</th><th colspan='2'>Mode</th><th>Min</th><th>Mean</th><th>Max</th><th>SD</th></tr>
+<tr><td><code>spell  </code></td><td><code>integer</code></td><td style='text-align:right;'> </td><td style='text-align:center;'><code>     </code></td><td>&zwnj;</td><td style='text-align:right;'>1.00  </td><td style='text-align:right;'>6.25  </td><td style='text-align:right;'>28.00 </td><td style='text-align:right;'>5.61  </td></tr>
+<tr><td><code>censor1</code></td><td><code>logical</code></td><td style='text-align:right;'>2</td><td style='text-align:center;'><code>False</code></td><td>67.90%</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td></tr>
+<tr><td><code>censor2</code></td><td><code>logical</code></td><td style='text-align:right;'>2</td><td style='text-align:center;'><code>False</code></td><td>89.86%</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td></tr>
+<tr><td><code>censor3</code></td><td><code>logical</code></td><td style='text-align:right;'>2</td><td style='text-align:center;'><code>False</code></td><td>82.83%</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td></tr>
+<tr><td><code>censor4</code></td><td><code>logical</code></td><td style='text-align:right;'>2</td><td style='text-align:center;'><code>False</code></td><td>62.45%</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td></tr>
+<tr><td><code>age    </code></td><td><code>integer</code></td><td style='text-align:right;'> </td><td style='text-align:center;'><code>     </code></td><td>&zwnj;</td><td style='text-align:right;'>20.00 </td><td style='text-align:right;'>35.44 </td><td style='text-align:right;'>61.00 </td><td style='text-align:right;'>10.64 </td></tr>
+<tr><td><code>ui     </code></td><td><code>factor </code></td><td style='text-align:right;'>2</td><td style='text-align:center;'><code>Yes  </code></td><td>55.28%</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td><td style='text-align:right;'>&zwnj;</td></tr>
+<tr><td><code>reprate</code></td><td><code>double </code></td><td style='text-align:right;'> </td><td style='text-align:center;'><code>     </code></td><td>&zwnj;</td><td style='text-align:right;'>0.07  </td><td style='text-align:right;'>0.45  </td><td style='text-align:right;'>2.06  </td><td style='text-align:right;'>0.11  </td></tr>
+<tr><td><code>disrate</code></td><td><code>double </code></td><td style='text-align:right;'> </td><td style='text-align:center;'><code>     </code></td><td>&zwnj;</td><td style='text-align:right;'>0.00  </td><td style='text-align:right;'>0.11  </td><td style='text-align:right;'>1.02  </td><td style='text-align:right;'>0.07  </td></tr>
+<tr><td><code>logwage</code></td><td><code>double </code></td><td style='text-align:right;'> </td><td style='text-align:center;'><code>     </code></td><td>&zwnj;</td><td style='text-align:right;'>2.71  </td><td style='text-align:right;'>5.69  </td><td style='text-align:right;'>7.60  </td><td style='text-align:right;'>0.54  </td></tr>
+<tr><td><code>tenure </code></td><td><code>integer</code></td><td style='text-align:right;'> </td><td style='text-align:center;'><code>     </code></td><td>&zwnj;</td><td style='text-align:right;'>0.00  </td><td style='text-align:right;'>4.11  </td><td style='text-align:right;'>40.00 </td><td style='text-align:right;'>5.86  </td></tr>
+</table>
+
 
 {% marginfigure 'fig4' 'assets/unemp/rates_density.png' "**Figure 4**:
 Densities of `reprate` and `disrate`. As can be seen in table 1, both
@@ -165,14 +167,6 @@ less experienced personnel is let of off first." %}
 
 ## Survivor, Hazard and Cumulative Hazard Functions
 
-{% marginfigure 'fig7' 'assets/unemp/age_tenure.png' "**Figure 7**: Scatter
-plot of `age` over `tenure`. The blue line relates to a fitted LOESS
-regression, which reveal what looks like to be a linear relationship
-between the two. Since such a relation does not violate any assumptions of
-the models used herein, the two variables are for now unchanged, but we
-note how much the combined variability in the two may be adequately
-captured by just one of them." %}
-
 Let $T$ denote our response variable, in this case `spell`. For the
 variable $T$, which quantifies the duration of moving from one state to
 another, we associate with it the **survivor function** $S(t)=\Pr(T>t)$. The
@@ -184,13 +178,13 @@ $E(T)$ as the area under the survival curve as
 $E(T)=\int_{0}^{\infty}S(u)du$. 
 
 While $S(t)$ gives the probability of *not* transitioning at period $t$,
-the **hazard function** $\lambda(t)$ gives the probability of transition at
+the **hazard function** $h(t)$ gives the probability of transition at
 period $t$. Here we see the terminology's roots within the medical sciences
-once more, as $\lambda(t)$ gives the 'hazard' of transitioning from the
+once more, as $h(t)$ gives the 'hazard' of transitioning from the
 state of life to the state of death. The hazard function is defined as
 
 $$
-    \lambda(t)=\begin{cases}
+    h(t)=\begin{cases}
     \lim\limits_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T<t+\Delta t\mid
         T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
         S(t)}{dt}& \text{for continuous $T$} \\
@@ -198,19 +192,19 @@ $$
     \end{cases}
 $$
 
-with the equality $\lambda(t)=f(t)/S(t)$ holding in both cases, where
+with the equality $h(t)=f(t)/S(t)$ holding in both cases, where
 $f(t)=dF(t)/dt$ is the density/mass function of $T$.  Lastly,
 we have the **cumulative hazard function**, in which we integrate
-$\lambda(t)$ over the interval $[0,t]$, so that
+$h(t)$ over the interval $[0,t]$, so that
 
 $$
-    \Lambda(t)=\begin{cases}
-    \int_{0}^{t}\lambda(u)du& \text{for continuous }T \\
-    \sum_{j\mid t_j\leqslant t}^{} \lambda(t_j)& \text{for discrete $T$}
+    H(t)=\begin{cases}
+    \int_{0}^{t}h(u)du& \text{for continuous }T \\
+    \sum_{j\mid t_j\leqslant t}^{} h(t_j)& \text{for discrete $T$}
     \end{cases}
 $$
 
-There's therefore no probabilistic interpretation of $\Lambda(t)$, as
+There's therefore no probabilistic interpretation of $H(t)$, as
 it's essentially the summation of very small probabilities, and therefore
 not bounded within the unit interval, but it's a quantity which increases
 as $t\to\infty$, and can be viewed as the increased hazard of transitioning
@@ -230,7 +224,7 @@ Kaplan-Meier estimator on `spell` stratified by `ui`, with shaded area giving th
 insurance are more likely to stay unemployment than those without, as the
 financial burden of unemployment is alleviated." %}
 
-Sample estimates for $S(t)$ and $\Lambda(t)$ are readily available via the
+Sample estimates for $S(t)$ and $H(t)$ are readily available via the
 **Kaplan-Meier** and **Nelson-Aalen** estimators, respectively. In
 constructing these estimators, we make use of the following variables:  
 
@@ -241,12 +235,28 @@ constructing these estimators, we make use of the following variables:
 </table>
 
 Using the sample estimate of the hazard function
-$\hat{\lambda}(t_j)=d_j/r_j$, we can then derive the nonparametric models
-as $\hat{S}(t)=\prod_{t_j\mid t_j\leqslant t}1-\hat{\lambda}(t_j)$ for the
+$\hat{h}(t_j)=d_j/r_j$, we can then derive the nonparametric models
+as $\hat{S}(t)=\prod_{t_j\mid t_j\leqslant t}1-\hat{h}(t_j)$ for the
 Kaplan-Meier estimate of the survivor function, and
-$\hat{\Lambda}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{\lambda}(t_j)$ for the
+$\hat{H}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{h}(t_j)$ for the
 Nelson-Aalen estimate of the cumulative hazard. Their estimation in R is
 pretty straightforward:
+
+{% maincolumn 'assets/unemp/nonparam_uni.png' "**Figure 4**: `censor4` over the values
+of `spell`. Unsurprisingly, the length of the spell appear to correspond to
+a greater chance of an observation being censored, which aligns with the
+conventional wisdom that unemployment is harder to escape the longer one is
+in it, making a spell exceed the sampling period. The correlation
+coefficient between `censor4` and `spell` is 0.31, which adds evidence to
+the previous statement." %}
+
+{% maincolumn 'assets/unemp/nonparam_stratified.png' "**Figure 4**: `censor4` over the values
+of `spell`. Unsurprisingly, the length of the spell appear to correspond to
+a greater chance of an observation being censored, which aligns with the
+conventional wisdom that unemployment is harder to escape the longer one is
+in it, making a spell exceed the sampling period. The correlation
+coefficient between `censor4` and `spell` is 0.31, which adds evidence to
+the previous statement." %}
 
 ```R
 # Univariate sample estimates
@@ -255,15 +265,9 @@ uvnonparam <- survfit(Surv(spell, censor4 == 0) ~ 1, data)
 mvnonparam <- survfit(Surv(spell, censor4 == 0) ~ ui, data)
 ```
 
-{% marginfigure 'nelson_aalen' 'assets/unemp/nelson_aalen.png'
-'' %}
-
-{% marginfigure 'nelson_aalen_mv' 'assets/unemp/nelson_aalen_mv.png'
-'' %}
-
 While the confidence intervals were readily available in the `survfit`
 object for $\hat{S}(t)$, they must be manually computed for
-$\hat{\Lambda}(t)$, which we do as  
+$\hat{H}(t)$, which we do as  
 
 ```R
 chazci <- function(model, alpha = .05) {
@@ -273,67 +277,94 @@ chazci <- function(model, alpha = .05) {
 }
 ```
 
-## Semiparametric and Parametric Specifications
+## Parametric Models for Survival Analysis
 
-In the following we'll introduce semi- and fully-parametric specifications
-for the either explicit, or implicit, estimation of the conditional hazard
-rate $\lambda(t\mid \boldsymbol{x})$. For the parametric specifications the
-entertained distributions are the exponential, Weibull, log-normal and
-log-logistic distribution. Only the exponential and Weibull distributions
-can be used for the **proportional hazard** (PH) model, while all can be used
-for the **accelerated failure time** (AFT) model.
+### Distributions for Duration Data
 
-### Parametric Distributions for Survival Analysis
+Here we'll introduce a selection of distributions we'll consider in our
+parametric model of the survival times. We consider four distributions in
+total, the exponential, Weibull, log-normal and log-logistic, but this list
+is by no means exhaustive. We'll fit each distribution to the data and
+estimate it's parameters via MLE, and then use those parameters to estimate
+the survivor function and the cumulative hazard for that distribution on
+`spell`.
 
-<!-- <div style:'text-weight: bold'>Hello</div> -->
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Exponential</span>
-Assuming that $T\sim \text{Exp}(\lambda)$, we have the constant hazard
-$\lambda(t)=\lambda$, and therefore $S(t)=\exp(-\lambda t)$ and
-$f(t)=\lambda\exp(-\lambda t)$. Additionally, we have $E(T)=1/\lambda$ and
-$\text{Var}(T)=1/\lambda^2$. 
+Under the assumption that $T\sim \text{Exp}(\lambda)$, where $\lambda$ is
+the rate (or inverse scale) parameter of the distribution, the hazard
+function will be given as the constant $h(t)=\lambda$. Since the density
+function of $T\sim \text{Exp}(\lambda)$ is $f(t)=\lambda\exp(-\lambda t)$,
+we have $S(t)=\exp(-\lambda t)$. Additionally, we have the moments
+$E(T)=1/\lambda$ and $\text{Var}(T)=1/\lambda^2$.
 
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Weibull</span>
-Assuming that $T\sim W(\lambda,p)$, we have the hazard
-$\lambda(t)=\lambda^ppt^{p-1}$, the survivor function $S(t)=\exp[-(\lambda
-t)^p]$ and cumulative hazard $\Lambda(t)=(\lambda t)^p$. The Weibull
-distribution is closely related to the exponential distribution, since, if
-$T\sim W(\lambda,p)$ then $T^p\sim \text{Exp}(\lambda)$.  
+Under the assumption that $T\sim W(\lambda,p)$, where $\lambda$ and $p$ are
+scale and shape parameters respectively, we have the hazard
+$h(t)=\lambda^ppt^{p-1}$, density
+$f(t)=\frac{p}{\lambda}(\frac{t}{\lambda})^{p-1}\exp[-(t/\lambda)^p]$
+defined for $t\geqslant 0$ (otherwise zero), and the survivor function
+$S(t)=\exp[-(\lambda t)^p]$. The Weibull distribution is closely related to
+the exponential distribution, since, if $T\sim W(\lambda,p)$ then $T^p\sim
+\text{Exp}(\lambda)$.
 
-<span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Log-normal</span>
-Assuming that $T\sim \text{Lognormal}(\mu,\sigma^2)$, we have the survivor
-function $S(t)=1-\Phi[(\ln t-\mu)/\sigma]$ with hazard 
-
-$$
-    \lambda(t)=\frac{\exp[-(\ln
-    t-\mu)^2/2\sigma^2]}{t\sigma\sqrt{2\pi}[1-\Phi((\ln t-\mu)/\sigma)]}
-$$
-
-
-### Proportional Hazard Models
-
-In PH models we seek to estimate the conditional hazard $\lambda(t\mid
-\boldsymbol{x})$, under the assumption that $\boldsymbol{x}$ affects
-the hazard by a proportional amount for each $t$.
-Under this assumption, we have specify $\lambda(t\mid \boldsymbol{x})$ as
-being of the form
+<span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Log-Normal</span>
+Under the assumption that $T\sim \text{Lognormal}(\mu,\sigma^2)$, where
+$\mu$ and $\sigma$ are location and scale parameters respectively, we have
+the hazard and density functions given as
 
 $$
-    \lambda(t,\boldsymbol{x})=\lambda_0(t)\exp(\boldsymbol{x}^{\small{\prime}}
-    \boldsymbol{\beta})
+    \begin{align}
+    h(t)&=\frac{\exp[-(\ln
+    t-\mu)^2/2\sigma^2]}{t\sigma\sqrt{2\pi}[1-\Phi((\ln t-\mu)/\sigma)}
+    \\[1em]
+    f(t)&=\frac{1}{t\sigma\sqrt{2\pi}}\exp(-\frac{(\ln t-\mu)^2}{2\sigma})
+    \end{align}
 $$
 
-where $\lambda_0(t)$ is the *baseline hazard*, that is, the hazard for a
-reference group where $\boldsymbol{x}\equiv \boldsymbol{0}$ (i.e. common
-for all $t$), and $\exp(\boldsymbol{x}\boldsymbol{\beta})$ give the
-*relative risk* associated with $\boldsymbol{x}$. The assumed distribution
-thus directly relates to $\lambda_0(t)$, which  
+where $\Phi(\cdot)$ is the standard Gaussian cdf. Additionally, under
+lognormality we have the survivor function $S(t)=1-\Phi[(\ln t -\mu)/\sigma]$. 
+
+<span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Log-Logistic</span>
+Under the assumption that $T\sim \text{Loglogistic}(\alpha, \beta)$, where
+$\alpha$ and $\beta$ are scale and shape parameters respectively, we have
+the hazard $h(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]$, the
+density function
+$f(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]^2$ and the
+survivor function $S(t)=[1+(t/\alpha)^{\beta}]^{-1}$.
+
+{% marginnote 'sn1' "Since the log-logistic distribution functions are
+imported, we need to specify the actual R function in `fitdistr` rather
+than giving a string as it's argument. This has the implication that we
+also need to manually specify starting values for the optimisation
+procedure. I tried a few different starting values for the parameters, and
+all converged to the same values. In the code you'll find starting values
+at 1 for both parameters - a nice generic value :-)" %} 
+
+Each distribution is fitted to the data via `fitdistr` from [the MASS
+package](https://cran.r-project.org/web/packages/MASS/MASS.pdf). For
+example, the exponential distribution is fitted as
+`MASS::fitdistr(data$spell, 'exponential')`. All distribution are available
+base R, except for the log-logistic, which we instead import from [the
+actuar package](https://cran.r-project.org/web/packages/actuar/actuar.pdf).
+Parameter estimates were then extracted from the resulting object, and are
+given in the table below with standard errors in parentheses.
 
 
-### Accelerated Failure Time Models
-
-With AFT models we construct a specification for $\ln T$ of the form $\ln
-T=\boldsymbol{x}\boldsymbol{\beta} + u$, where $u$ is an error term whose
-distribution depends on the choice of distribution of  
 
 
+<table class='norulers' style='width:35%;'>
+<tr><th></th><th><strong>Location</strong></th><th><strong>Scale/Rate</strong></th><th><strong>Shape</strong></th></tr>
+<tr><td>Exponential<td></td></td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>0.160<span style='color:#fafbfc'>)</span>(0.003)</td><td></td></tr>
+<tr><td>Weibull</td><td></td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>1.184<span style='color:#fafbfc'>)</span>(0.016)</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>6.649<span style='color:#fafbfc'>)</span>(0.103)</td></tr>
+<tr><td>Log-Normal</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>1.439<span style='color:#fafbfc'>)</span>(0.016)</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>0.918<span style='color:#fafbfc'>)</span>(0.011)</td><td></td></tr>
+<tr><td>Log-Logistic</td><td></td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>1.826<span style='color:#fafbfc'>)</span>(0.026)</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>0.235<span style='color:#fafbfc'>)</span>(0.004)</td></tr>
+</table>
+
+{% maincolumn 'assets/unemp/pdfs.png' "**Figure 4**: `censor4` over the values
+of `spell`. Unsurprisingly, the length of the spell appear to correspond to
+a greater chance of an observation being censored, which aligns with the
+conventional wisdom that unemployment is harder to escape the longer one is
+in it, making a spell exceed the sampling period. The correlation
+coefficient between `censor4` and `spell` is 0.31, which adds evidence to
+the previous statement." %}
 

@@ -34,8 +34,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     padding-left: 13%;
-    font-family: SegoeUI;
-    font-family: StudioFeixenSans;
+    font-family: RobotoCondensed;
     background-color: $bg-color;
     color: $text-color;
     max-width: 1400px;
@@ -52,11 +51,8 @@ p, a {
 
 h1 {
     font-weight: 200;
-    // font-family: Minion;
-    // font-weight: normal;
     font-family: StudioFeixenSans;
     font-weight: bold;
-    // font-style: italic;
     margin-top: 2.5rem;
     margin-top: 1.5cm;
     margin-bottom: 1.568rem;
@@ -69,11 +65,8 @@ h1 code {
 }
 
 h2, h3 {
-    // font-family: Minion;
-    // font-weight: normal;
     font-family: StudioFeixenSans;
     font-weight: bold;
-    // font-style: italic;
     margin-top: 3rem;
     margin-bottom: -0.5rem;
 }
@@ -107,9 +100,6 @@ h3 {
 a {
     color: $contrast-color;
     text-decoration: none;
-    // font-family: Myriad;
-    // letter-spacing: 0.03rem;
-    // font-size: 1.4rem;
 }
 
 p > a, cite > a, span > a {
@@ -191,10 +181,6 @@ blockquote footer {
     text-align: right;
 }
 
-// .sans {
-//     font-family: $sans-font;
-//     letter-spacing: .03em;
-// }
 
 pre, pre code, p code, p pre code, .marginnote code, figcaption.maincolumn-figure code {
     // Inline code 
@@ -226,11 +212,6 @@ li code {
     font-family: OperatorMono;
 }
 
-
-// h1 code, h2 code, h3 code {
-//     font-size: 0.80em;
-// }
-
 table.norulers {
     width: auto;
     width: 53%;
@@ -240,16 +221,24 @@ table.norulers {
     margin-top: 0.5cm;
     border-top: 0px solid $border-color;
     border-bottom: 0px solid $border-color;
+    font-family: RobotoCondensed;
 }
 
 table.norulers td {
     font-size: 1.0rem;
+    font-family: RobotoCondensed;
     border-bottom: 0px solid $border-color;
 }
 
-
 table.norulers tr em {
     font-size: 1.0rem;
+}
+
+table.norulers th {
+    font-size: 1.1rem;
+    font-family: StudioFeixenSans;
+    font-weight: bold;
+    border-bottom: 0px solid $border-color;
 }
 
 
@@ -263,8 +252,7 @@ table, table.booktabs {
 }
 
 .booktabs th, th {
-    font-family: SegoeUI;
-    font-family: StudioFeixenSans;
+    font-family: Lato,SegoeUI;
     font-size: 1rem;
     font-weight: normal;
     padding-bottom: 0.95ex;
@@ -536,8 +524,7 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
 }
 .smaller {
     font-size: 0.9rem;
-    font-family: SegoeUI;
-    font-family: StudioFeixenSans;
+    font-family: Lato,SegoeUI;
     font-style: normal;
 }
 
@@ -562,8 +549,6 @@ figcaption.maincolumn-figure, figcaption.maincolumn-figure a, figcaption.maincol
     // font-size: 1.2rem;
     font-family: Minion;
     font-style: italic;
-    // font-family: StudioFeixenSans;
-    // font-style: normal;
     font-size: 1.0rem;
     // margin-left: auto;
     // margin-right: auto;
@@ -626,8 +611,7 @@ body.full-width {
 
 .full-width article p {
     width: 89%;
-    font-family: SegoeUI;
-    font-family: StudioFeixenSans;
+    font-family: RobotoCondensed;
     font-style: normal;
 }
 

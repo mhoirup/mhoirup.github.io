@@ -1,6 +1,32 @@
 @charset "UTF-8";
 
 @font-face {
+  font-family: RobotoCondensed;
+  src: url("../fonts/RobotoCondensed-Regular.ttf") format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: RobotoCondensed;
+  src: url("../fonts/RobotoCondensed-Bold.ttf") format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: RobotoCondensed;
+  src: url("../fonts/RobotoCondensed-Italic.ttf") format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face {
+  font-family: RobotoCondensed;
+  src: url("../fonts/RobotoCondensed-BoldItalic.ttf") format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
   font-family: StudioFeixenSans;
   src: url("../fonts/StudioFeixenSans-Regular.ttf") format('truetype');
   font-weight: normal;
@@ -15,62 +41,11 @@
 }
 
 @font-face {
-  font-family: SegoeUI;
-  src: url("../fonts/SegoeUI-Regular.ttf") format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: SegoeUI;
-  src: url("../fonts/SegoeUI-Italic.ttf") format('truetype');
-  font-weight: normal;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: SegoeUI;
-  src: url("../fonts/SegoeUI-Bold.ttf") format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: SegoeUI;
-  src: url("../fonts/SegoeUI-Bold-Italc.ttf") format('truetype');
-  font-weight: bold;
-  font-style: italic;
-}
-
-@font-face {
   font-family: MinionPro;
   src: url("../fonts/MinionPro-It.otf") format('opentype');
   font-weight: normal;
   font-style: italic;
 }
-
-
-@font-face {
-  font-family: Myriad;
-  src: url("../fonts/MyriadPro-Regular.otf") format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: Myriad;
-  src: url("../fonts/MyriadPro-Bold.otf") format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: Myriad;
-  src: url("../fonts/MyriadPro-It.otf") format('opentype');
-  font-weight: bold;
-  font-style: italic;
-}
-
 
 @font-face {
   font-family: OperatorMono;
