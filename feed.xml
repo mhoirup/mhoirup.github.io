@@ -1,31 +1,452 @@
----
-layout: null
-nav_exclude: true
----
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>{{ site.title | xml_escape }}</title>
-    <description>{{ site.description | xml_escape }}</description>
-    <link>{{ site.url }}{{ site.baseurl }}/</link>
-    <atom:link href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml"/>
-    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
-    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
-    <generator>Jekyll v{{ jekyll.version }}</generator>
-    {% for post in site.posts limit:10 %}
+    <title>Your awesome title</title>
+    <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</description>
+    <link>/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sun, 09 May 2021 20:03:33 +0200</pubDate>
+    <lastBuildDate>Sun, 09 May 2021 20:03:33 +0200</lastBuildDate>
+    <generator>Jekyll v4.2.0</generator>
+    
       <item>
-        <title>{{ post.title | xml_escape }}</title>
-        <description>{{ post.content | xml_escape }}</description>
-        <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
-        <link>{{ post.url | prepend: site.baseurl | prepend: site.url }}</link>
-        <guid isPermaLink="true">{{ post.url | prepend: site.baseurl | prepend: site.url }}</guid>
-        {% for tag in post.tags %}
-        <category>{{ tag | xml_escape }}</category>
-        {% endfor %}
-        {% for cat in post.categories %}
-        <category>{{ cat | xml_escape }}</category>
-        {% endfor %}
+        <title>Survival Analysis of Unemployment Data</title>
+        <description>&lt;p&gt;Survival analysis is the statistical analysis of duration data. Durations
+can be anything from life until death in the medical sciences, run until
+failure in engineering, or in this case, unemployment duration. In this
+project we seek to understand the factors affecting the probability of
+returning to the workforce.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;fig1&quot; class=&quot;margin-toggle&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fig1&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;img class=&quot;fullwidth&quot; src=&quot;/assets/unemp/spell_hist.png&quot; /&gt;&lt;br /&gt;&lt;strong&gt;Figure 1&lt;/strong&gt;: Distribution of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell&lt;/code&gt;. A majority of respondents finished their
+unemployment spell prior to 10x2 = 20 week mark, with relatively few
+surpassing 15 two-week intervals.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Full code can be found on my github at
+&lt;a href=&quot;https://github.com/mhoirup/econometric-projects/tree/main/unemployment&quot;&gt;mhoirup/econometric-projects/unemployment&lt;/a&gt;,
+where files are split into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;imports.R&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exploratory.R&lt;/code&gt; and
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;analysis.R&lt;/code&gt; to keep some semblance of organisation in the project structure.
+We begin the analysis by loading the data into our R workspace along with
+the packages we’re going to use. The data itself is from &lt;a href=&quot;https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf&quot;&gt;the Ecdat
+package&lt;/a&gt; and was
+used in McCall (1996). The main methodological references are Cameron &amp;amp;
+Trivedi (2005) and Wooldridge (2010).&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;fig2&quot; class=&quot;margin-toggle&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fig2&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;img class=&quot;fullwidth&quot; src=&quot;/assets/unemp/censored_hist.png&quot; /&gt;&lt;br /&gt;&lt;strong&gt;Figure
+2&lt;/strong&gt;: Distributions of the four &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;censor&lt;/code&gt; variables where I’ve changed the
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1&lt;/code&gt;s and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0&lt;/code&gt;s into booleans for clarity. Here we note the distribution of
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;censor4&lt;/code&gt; which is of interest; 1.255 observations have been censored,
+while 2.088 observations correspond to completed spells.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;fig3&quot; class=&quot;margin-toggle&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fig3&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;img class=&quot;fullwidth&quot; src=&quot;/assets/unemp/age_hist.png&quot; /&gt;&lt;br /&gt;&lt;strong&gt;Figure 3&lt;/strong&gt;: Distribution
+of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;age&lt;/code&gt;. Bin width is set at 2 to reduce the number of bars in the graph.
+A majority of respondents is under 40 years of age, 2.231 in fact, which
+corresponds to 68% of all observations.&lt;/span&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dplyr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Ecdat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;survival&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ggplot2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UnempDur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UnempDur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UnempDur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tibble&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as.tibble&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;# A tibble: 3,343 x 11&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#    spell censor1 censor2 censor3 censor4   age ui    reprate disrate logwage tenure&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#    &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  1     5       1       0       0       0    41 no      0.179   0.045    6.90      3&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  2    13       1       0       0       0    30 yes     0.52    0.13     5.29      6&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  3    21       1       0       0       0    36 yes     0.204   0.051    6.77      1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  4     3       1       0       0       0    26 yes     0.448   0.112    5.98      3&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  5     9       0       0       1       0    22 yes     0.32    0.08     6.32      0&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  6    11       0       0       0       1    43 yes     0.187   0.047    6.85      9&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  7     1       0       0       0       0    24 no      0.52    0.13     5.61      1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  8     3       1       0       0       0    32 no      0.373   0.093    6.16      0&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;#  9     7       1       0       0       0    35 yes     0.52    0.13     5.29      2&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;# 10     5       0       0       0       1    31 yes     0.52    0.13     5.29      1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;# … with 3,333 more rows &lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Below is a table with a brief description of each variable. In particular,
+note how &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell&lt;/code&gt; give the duration of unemployment in two-week intervals,
+for example, if &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell == 2&lt;/code&gt;, a respondent has been unemployed for four
+weeks. Except for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;censor4&lt;/code&gt;, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;censor&lt;/code&gt; variables will not be needed in
+this analysis, as we’re only interested in whether or not respondents had
+entered the workforce at the end of the survey.&lt;/p&gt;
+
+&lt;table class=&quot;norulers&quot;&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;spell&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Unemployment duration measured in two-week intervals.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor1&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1&lt;/code&gt; if reemployed at a full-time position after ended spell.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor2&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1&lt;/code&gt; if reemployed at a part-time position after ended spell.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor3&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1&lt;/code&gt; if reemployed but later resigned from that reemployment..&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor4&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1&lt;/code&gt; if still unemployed at survey end.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;age&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Age of respondent.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;ui&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;1&lt;/code&gt; if respondent has unemployment insurance.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;reprate&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Eligible replacement rate.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;disrate&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Eligible disregard rate.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;logwage&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Logarithmic weekly earnings.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;tenure&lt;/code&gt;&lt;/td&gt;&lt;td&gt;Tenure at lost job.&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;As a last step in the introduction, summary statistics are computed for
+each variable using my own &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dsummary()&lt;/code&gt; function, the definition of which
+can be found in &lt;a href=&quot;https://github.com/mhoirup/dotfiles/blob/main/.Rprofile&quot;&gt;my .Rprofile&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;table1&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;table1&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;strong&gt;Table 1&lt;/strong&gt;: Variable summaries of both numerical
+and categorical variables. Take special note of the distribution of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui&lt;/code&gt;,
+whether a respondent has unemployment insurance, which appear to be
+somewhat evenly split among observations &lt;/span&gt;&lt;/p&gt;
+
+&lt;table class=&quot;norulers&quot; style=&quot;width:51%;&quot;&gt;
+&lt;tr&gt;&lt;th&gt;Variable&lt;/th&gt;&lt;th&gt;Type&lt;/th&gt;&lt;th&gt;N Unique&lt;/th&gt;&lt;th colspan=&quot;2&quot;&gt;Mode&lt;/th&gt;&lt;th&gt;Min&lt;/th&gt;&lt;th&gt;Mean&lt;/th&gt;&lt;th&gt;Max&lt;/th&gt;&lt;th&gt;SD&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;spell  &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;integer&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt; &lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;1.00  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;6.25  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;28.00 &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;5.61  &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor1&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;logical&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;False&lt;/code&gt;&lt;/td&gt;&lt;td&gt;67.90%&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor2&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;logical&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;False&lt;/code&gt;&lt;/td&gt;&lt;td&gt;89.86%&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor3&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;logical&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;False&lt;/code&gt;&lt;/td&gt;&lt;td&gt;82.83%&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;censor4&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;logical&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;False&lt;/code&gt;&lt;/td&gt;&lt;td&gt;62.45%&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;age    &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;integer&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt; &lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;20.00 &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;35.44 &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;61.00 &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;10.64 &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;ui     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;factor &lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;Yes  &lt;/code&gt;&lt;/td&gt;&lt;td&gt;55.28%&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;&amp;zwnj;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;reprate&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;double &lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt; &lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.07  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.45  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2.06  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.11  &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;disrate&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;double &lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt; &lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.00  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.11  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;1.02  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.07  &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;logwage&lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;double &lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt; &lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;2.71  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;5.69  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;7.60  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.54  &lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;code&gt;tenure &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&lt;code&gt;integer&lt;/code&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt; &lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;&lt;code&gt;     &lt;/code&gt;&lt;/td&gt;&lt;td&gt;&amp;zwnj;&lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;0.00  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;4.11  &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;40.00 &lt;/td&gt;&lt;td style=&quot;text-align:right;&quot;&gt;5.86  &lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;label for=&quot;fig4&quot; class=&quot;margin-toggle&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fig4&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;img class=&quot;fullwidth&quot; src=&quot;/assets/unemp/rates_density.png&quot; /&gt;&lt;br /&gt;&lt;strong&gt;Figure 4&lt;/strong&gt;:
+Densities of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reprate&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;disrate&lt;/code&gt;. As can be seen in table 1, both
+variables are of double type, however, examining their number unique
+values, e.g. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;length(unique(data$reprate))&lt;/code&gt;, reveal
+that neither are exactly continuous; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reprate&lt;/code&gt; has 419 unique values while
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;disrate&lt;/code&gt; has 246. The range of both variables is too long to treat them as
+discrete, so we’re going to leave them as is.&lt;/span&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;censoring-mechanisms&quot;&gt;Censoring Mechanisms&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Censoring&lt;/strong&gt; refers to the inaccurate measurement of the observed duration $t$
+due to the way data is sampled. Different types of censoring exist, which
+is defined by the censoring time $c$, which denote the time at which a
+realisation of the random variable $T$ was sampled. For an observation not
+to be censored we require that $t$ is known, and therefore the implied
+relation $0\leqslant t\leqslant c$. In the survival analysis literature we
+typically deal with one of the following censoring mechanisms:&lt;/p&gt;
+
+&lt;table class=&quot;norulers&quot;&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;right-&lt;br /&gt;censoring&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;Spell is observed from time 0 until censoring time $c$. Time $t$ is unknown and somewhere in the interval $(c,\infty)$.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;left-&lt;br /&gt;censoring&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;Spell has already ended at censor time $c$. Time $t$ is unknown but somewhere in the interval $(0,c)$.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;strong&gt;interval-&lt;br /&gt;censoring&lt;/strong&gt;&lt;/td&gt;&lt;td&gt;Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Define the &lt;strong&gt;censoring mechanism&lt;/strong&gt; as $C$, and let $T^*$ denote the true
+(as in, unaffected by censoring) version of the observed variable $T$. In
+our sample we thus observe the (potentially) censored $T=\min(T^*, C)$, as
+well as a censoring indicator $\delta=I(T^*&amp;lt;C)$, which equals 1 if the
+observation has &lt;em&gt;not&lt;/em&gt; been censored and 0 otherwise. For standard survival
+analysis methods to be valid under the presence of censoring, we require
+that $C$ is independent of $T^*$, i.e. the parameters of the distribution
+of $C$ are uninformative about the parameters of the distribution of $T^*$.&lt;/p&gt;
+
+&lt;p&gt;Multiple censoring mechanisms exists, with the type of mechanism depending
+on the way the sampling is carried. In this case we have &lt;strong&gt;type I&lt;/strong&gt;
+censoring, whereby $C$ is effectively a fixed value, namely the time the
+survey ends. Due to the fixed $C$ for all $t$, we have $\Pr(T\geqslant
+t\mid \delta = 0)=\Pr(T\geqslant t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$,
+a property of all independent censoring mechanisms, which allows us to
+treat $\delta$ as exogenous, meaning we don’t have to model $C$.&lt;/p&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/assets/unemp/spell_censor4.png&quot; /&gt;&lt;figcaption class=&quot;maincolumn-figure&quot;&gt;&lt;strong&gt;Figure 5&lt;/strong&gt;: &lt;code&gt;censor4&lt;/code&gt; over the values
+of &lt;code&gt;spell&lt;/code&gt;. Unsurprisingly, the length of the spell appear to correspond to
+a greater chance of an observation being censored, which aligns with the
+conventional wisdom that unemployment is harder to escape the longer one is
+in it, making a spell exceed the sampling period. The correlation
+coefficient between &lt;code&gt;censor4&lt;/code&gt; and &lt;code&gt;spell&lt;/code&gt; is 0.31, which adds evidence to
+the previous statement.&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;label for=&quot;fig6&quot; class=&quot;margin-toggle&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fig6&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;img class=&quot;fullwidth&quot; src=&quot;/assets/unemp/logwage_hist.png&quot; /&gt;&lt;br /&gt;&lt;strong&gt;Figure 6&lt;/strong&gt;:
+Density of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;logwage&lt;/code&gt;. Observations are centred around the 5.5
+mark, with a distribution that appear to be, for the most part, bell shaped.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;fig7&quot; class=&quot;margin-toggle&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fig7&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;img class=&quot;fullwidth&quot; src=&quot;/assets/unemp/tenure_hist.png&quot; /&gt;&lt;br /&gt;&lt;strong&gt;Figure 7&lt;/strong&gt;:
+Histogram of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tenure&lt;/code&gt;. 2.587 observations, 77% of the data, had a tenure of
+five years or less at their lost job, which is not surprising, as typically
+less experienced personnel is let go of first.&lt;/span&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;survivor-hazard-and-cumulative-hazard-functions&quot;&gt;Survivor, Hazard and Cumulative Hazard Functions&lt;/h2&gt;
+
+&lt;p&gt;Let $T$ denote our response variable, in this case &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell&lt;/code&gt;. For the
+variable $T$, which quantifies the duration of moving from one state to
+another, we associate with it the &lt;strong&gt;survivor function&lt;/strong&gt; $S(t)=\Pr(T&amp;gt;t)$. The
+survivor function is related to the CDF as $S(t)=1-F(t)$, and thus gives
+the probability of continuing in the state from $t_j$ to $t_{j+1}$. Since
+$S(t)$ is monotonically declining, we have $\lim_{t\to\infty}S(t)=0$ under
+the assumption that spells ultimately do end. From $S(t)$, we can obtain
+$E(T)$ as the area under the survival curve as
+$E(T)=\int_{0}^{\infty}S(u)du$.&lt;/p&gt;
+
+&lt;p&gt;While $S(t)$ gives the probability of &lt;em&gt;not&lt;/em&gt; transitioning at period $t$,
+the &lt;strong&gt;hazard function&lt;/strong&gt; $h(t)$ gives the probability of transition at
+period $t$. Here we see the terminology’s roots within the medical sciences
+once more, as $h(t)$ gives the ‘hazard’ of transitioning from the
+state of life to the state of death. The hazard function is defined as&lt;/p&gt;
+
+\[h(t)=\begin{cases}
+    \lim\limits_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T&amp;lt;t+\Delta t\mid
+        T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
+        S(t)}{dt}&amp;amp; \text{for continuous $T$} \\
+        \Pr(T=t\mid T\geqslant t) &amp;amp; \text{for discrete $T$}
+    \end{cases}\]
+
+&lt;p&gt;with the equality $h(t)=f(t)/S(t)$ holding in both cases, where
+$f(t)=dF(t)/dt$ is the density/mass function of $T$.  Lastly,
+we have the &lt;strong&gt;cumulative hazard function&lt;/strong&gt;, in which we integrate
+$h(t)$ over the interval $[0,t]$, so that&lt;/p&gt;
+
+\[H(t)=\begin{cases}
+    \int_{0}^{t}h(u)du&amp;amp; \text{for continuous }T \\
+    \sum_{j\mid t_j\leqslant t}^{} h(t_j)&amp;amp; \text{for discrete $T$}
+    \end{cases}\]
+
+&lt;p&gt;There’s therefore no probabilistic interpretation of $H(t)$, as
+it’s essentially the summation of very small probabilities, and therefore
+not bounded within the unit interval, but it’s a quantity which increases
+as $t\to\infty$, and can be viewed as the increased hazard of transitioning
+states as time goes on.&lt;/p&gt;
+
+&lt;h2 id=&quot;nonparametric-models&quot;&gt;Nonparametric Models&lt;/h2&gt;
+
+&lt;p&gt;Sample estimates for $S(t)$ and $H(t)$ are readily available via the
+&lt;strong&gt;Kaplan-Meier&lt;/strong&gt; and &lt;strong&gt;Nelson-Aalen&lt;/strong&gt; estimators, respectively. In
+constructing these estimators, we make use of the following variables:&lt;/p&gt;
+
+&lt;table class=&quot;norulers&quot;&gt;
+&lt;tr&gt;&lt;td&gt;$d_j$&lt;/td&gt;&lt;td&gt;The number of completed spells at time $t_j$.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;$m_j$&lt;/td&gt;&lt;td&gt;The number of right-censored spells in the interval $[t_j,t_{j+1})$.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;$r_j$&lt;/td&gt;&lt;td&gt;The number of spell that have neither ended nor been censored just before time $t_j$, which can be computed as $r_j=\sum_{l\mid l\geqslant j}(d_l+m_l)$.&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Using the sample estimate of the hazard function $\hat{h}(t_j)=d_j/r_j$, we
+can then derive the nonparametric models as $\hat{S}(t)=\prod_{t_j\mid
+t_j\leqslant t}1-\hat{h}(t_j)$ for the Kaplan-Meier estimate of the
+survivor function, and $\hat{H}(t)=\sum_{t_j\mid t_j\leqslant t}
+\hat{h}(t_j)$ for the Nelson-Aalen estimate of the cumulative hazard. We
+obtained our estimators by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;survfit(Surv(spell, censor4 == 0) ~ 1, data)&lt;/code&gt;
+via &lt;a href=&quot;https://cran.microsoft.com/web/packages/survival/survival.pdf&quot;&gt;the survival
+package&lt;/a&gt;.
+While the confidence intervals are readily available for the Kaplan-Meier
+estimator, they must be computed «by hand» for the Nelson-Aalen estimator
+for the cumulative hazard. Fortunately, the standard deviations for both
+estimators for all $t$ are available in the resulting object, so the
+confidence intervals are easily derived via a small custom function:&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;chazci&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cumhaz&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;qnorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std.chaz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upper&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cumhaz&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;qnorm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std.chaz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data.frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;upper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/assets/unemp/nonparam_uni.png&quot; /&gt;&lt;figcaption class=&quot;maincolumn-figure&quot;&gt;&lt;strong&gt;Figure 8&lt;/strong&gt;: Nonparametric
+models estimated on &lt;code&gt;spell&lt;/code&gt;. The shaded area gives the 95% confidence
+interval. From the Kaplan-Meier estimator, we can see how the probability
+of ending a spell decreases rapidly until around the 7x2 = 14 week mark,
+where the rate of decline decreases a bit. The Nelson-Aalen estimator show
+a steady increase in the cumulative hazard, with confidence bands spanning
+further and further as &lt;code&gt;spell&lt;/code&gt; increases.&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/assets/unemp/nonparam_stratified.png&quot; /&gt;&lt;figcaption class=&quot;maincolumn-figure&quot;&gt;&lt;strong&gt;Figure 9&lt;/strong&gt;:
+Nonparametric models estimated on &lt;code&gt;spell&lt;/code&gt; when stratified by &lt;code&gt;ui&lt;/code&gt;, i.e. by
+having unemployment insurance or not. The shaded area gives the 95% confidence
+interval. Unsurprisingly, those who have unemployment insurance are more
+likely to stay unemployment than those without, as the financial burden of
+unemployment is alleviated. The survivor functions appear to converge as
+&lt;code&gt;spell&lt;/code&gt; increases, while the cumulative hazards appear to be
+proportional to each other, implying that, over time, the probability of
+staying unemployed is similar for for those who collect UI and those who do
+not, with the difference in probability of employment between the two
+remains the same.&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;parametric-models-for-survival-analysis&quot;&gt;Parametric Models for Survival Analysis&lt;/h2&gt;
+
+&lt;h3 id=&quot;distributions-for-duration-data&quot;&gt;Distributions for Duration Data&lt;/h3&gt;
+
+&lt;p&gt;Here we’ll introduce a selection of distributions we’ll consider in our
+parametric model of the survival times. We consider four distributions in
+total, the exponential, Weibull, log-normal and log-logistic, but this list
+is by no means exhaustive. We’ll fit each distribution to the data and
+estimate it’s parameters via MLE, and then use those parameters to estimate
+the survivor function and the cumulative hazard for that distribution on
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&quot;font-weight:bold;font-size:1.1rem;margin-right:1rem&quot;&gt;Exponential&lt;/span&gt;
+Under the assumption that $T\sim$ Exponential$(\lambda)$, where $\lambda$ is
+the rate (or inverse scale) parameter of the distribution, the hazard
+function will be given as the constant $h(t)=\lambda$. Since the density
+function of $T\sim \text{Exp}(\lambda)$ is $f(t)=\lambda\exp(-\lambda t)$,
+we have $S(t)=\exp(-\lambda t)$. Additionally, we have the moments
+$E(T)=1/\lambda$ and $\text{Var}(T)=1/\lambda^2$.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&quot;font-weight:bold;font-size:1.1rem;margin-right:1rem&quot;&gt;Weibull&lt;/span&gt;
+Under the assumption that $T\sim$ Weibull$(\lambda,p)$, where $\lambda$ and $p$ are
+scale and shape parameters respectively, we have the hazard
+$h(t)=\lambda^ppt^{p-1}$, density
+$f(t)=\frac{p}{\lambda}(\frac{t}{\lambda})^{p-1}\exp[-(t/\lambda)^p]$
+defined for $t\geqslant 0$ (otherwise zero), and the survivor function
+$S(t)=\exp[-(\lambda t)^p]$. The Weibull distribution is closely related to
+the exponential distribution, since, if $T\sim$ Weibull$(\lambda,p)$ then $T^p\sim$
+Exponential$(\lambda)$.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&quot;font-weight:bold;font-size:1.1rem;margin-right:1rem&quot;&gt;Log-Normal&lt;/span&gt;
+Under the assumption that $T\sim$ Log-Normal$(\mu,\sigma^2)$, where
+$\mu$ and $\sigma$ are location and scale parameters respectively, we have
+the hazard and density functions given as&lt;/p&gt;
+
+\[\begin{align}
+    h(t)&amp;amp;=\frac{\exp[-(\ln
+    t-\mu)^2/2\sigma^2]}{t\sigma\sqrt{2\pi}[1-\Phi((\ln t-\mu)/\sigma)}
+    \\[1em]
+    f(t)&amp;amp;=\frac{1}{t\sigma\sqrt{2\pi}}\exp(-\frac{(\ln t-\mu)^2}{2\sigma})
+    \end{align}\]
+
+&lt;p&gt;where $\Phi(\cdot)$ is the standard Gaussian cdf. Additionally, under
+lognormality we have the survivor function $S(t)=1-\Phi[(\ln t -\mu)/\sigma]$.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&quot;font-weight:bold;font-size:1.1rem;margin-right:1rem&quot;&gt;Log-Logistic&lt;/span&gt;
+Under the assumption that $T\sim$ Log-Logistic$(\alpha, \beta)$, where
+$\alpha$ and $\beta$ are scale and shape parameters respectively, we have
+the hazard $h(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]$, the
+density function
+$f(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]^2$ and the
+survivor function $S(t)=[1+(t/\alpha)^{\beta}]^{-1}$.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;sn1&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sn1&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Since the log-logistic distribution functions are
+imported, we need to specify the actual R function in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fitdistr&lt;/code&gt; rather
+than giving a string as it’s argument. This has the implication that we
+also need to manually specify starting values for the optimisation
+procedure. I tried a few different starting values for the parameters, and
+all converged to the same values. In the code you’ll find starting values
+at 1 for both parameters - a nice generic value :-) &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Each distribution is fitted to the data via &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fitdistr&lt;/code&gt; from &lt;a href=&quot;https://cran.r-project.org/web/packages/MASS/MASS.pdf&quot;&gt;the MASS
+package&lt;/a&gt;. For
+example, the exponential distribution is fitted as
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MASS::fitdistr(data$spell, &apos;exponential&apos;)&lt;/code&gt;. All distribution are available
+base R, except for the log-logistic, which we instead import from &lt;a href=&quot;https://cran.r-project.org/web/packages/actuar/actuar.pdf&quot;&gt;the
+actuar package&lt;/a&gt;.
+Parameter estimates were then extracted from the resulting object.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;table2&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;table2&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;strong&gt;Table 2&lt;/strong&gt;: Parameter estimates for the
+distributions entertained, as fitted on on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell&lt;/code&gt;. Standard errors are
+given in parentheses. Estimates were obtained using the default of
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fitdistr&lt;/code&gt; which is the Nelder-Mead method. &lt;/span&gt;&lt;/p&gt;
+
+&lt;table class=&quot;norulers&quot;&gt;
+&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;&lt;strong&gt;Location&lt;/strong&gt;&lt;/th&gt;&lt;th&gt;&lt;strong&gt;Scale/Rate&lt;/strong&gt;&lt;/th&gt;&lt;th&gt;&lt;strong&gt;Shape&lt;/strong&gt;&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Exponential&lt;td&gt;&lt;/td&gt;&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;0.160 (0.003)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Weibull&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;1.184 (0.016)&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;6.649 (0.103)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Log-Normal&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;1.439 (0.016)&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;0.918 (0.011)&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Log-Logistic&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;1.826 (0.026)&lt;/td&gt;&lt;td style=&quot;text-align:center;&quot;&gt;0.235 (0.004)&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Having obtained our parameters, we compute the densities of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spell&lt;/code&gt; under
+the given distribution. These densities are then saved in the dataframe
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pdfs&lt;/code&gt;. Using the exponential distribution as an example, we have&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;expo&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MASS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fitdistr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;exponential&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;# Estimate parameter(s)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pdf&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dexp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;# Estimate densities&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/assets/unemp/pdfs.png&quot; /&gt;&lt;figcaption class=&quot;maincolumn-figure&quot;&gt;&lt;strong&gt;Figure 10&lt;/strong&gt;:&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;p&gt;As we did with the density functions, we also compute the survivor
+function under each distribution and place them in the dataframe
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;survivor_functions&lt;/code&gt;. Using the equality $S(t)=1-F(t)$,
+the computation of $S(t)$ is very simple:&lt;/p&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;St&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pexp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/assets/unemp/surv_funcs.png&quot; /&gt;&lt;figcaption class=&quot;maincolumn-figure&quot;&gt;&lt;strong&gt;Figure 11&lt;/strong&gt;:&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;div class=&quot;language-R highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;distributions&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Exponential&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Weibull&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Log-Normal&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Log-Logistic&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setNames&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pdfs&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;survivor_functions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distributions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cbind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spell&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distinct&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arrange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&amp;gt;%&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mutate_at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;distributions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cumsum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;figure&gt;&lt;img src=&quot;/assets/unemp/chaz.png&quot; /&gt;&lt;figcaption class=&quot;maincolumn-figure&quot;&gt;&lt;strong&gt;Figure 12&lt;/strong&gt;:&lt;/figcaption&gt;&lt;/figure&gt;
+
+</description>
+        <pubDate>Fri, 07 May 2021 00:00:00 +0200</pubDate>
+        <link>/2021/05/07/Survival-Analysis.html</link>
+        <guid isPermaLink="true">/2021/05/07/Survival-Analysis.html</guid>
+        
+        
       </item>
-    {% endfor %}
+    
+      <item>
+        <title>Econometrics with Numpy: Arima Models</title>
+        <description>&lt;p&gt;In this project we’ll build an Arima model (mostly) from scratch in Python
+using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;numpy&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scipy&lt;/code&gt; libraries. At the end, we’ll have obtained a
+Pyton class object capable of estimating Arima models of varying orders as
+well as forecasting values into the future.&lt;/p&gt;
+
+&lt;p&gt;The data we’ll use are the USD/EUR exchange rates spanning from January 2nd
+2015 to April 19th 2021, both dates inclusive, sourced from the Federal
+Reserve Economic Data (FRED) database. The data can found at
+&lt;a href=&quot;https://fred.stlouisfed.org/series/DEXUSEU&quot;&gt;https://fred.stlouisfed.org/series/DEXUSEU&lt;/a&gt;.
+Code fot this project is available on my Github at
+&lt;a href=&quot;https://github.com/mhoirup/econometric-projects/blob/main/econometrics-python/arima-models.py&quot;&gt;mhoirup/econometrics-python/arima_models.py&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We start off by importing the necessary libraries and sourcing the data:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;datetime&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas_datareader&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;scipy.optimize&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;scipy.stats&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;norm&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;series&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataReader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;DEXUSEU&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;fred&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&apos;2018-01-02&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;series&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;describe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#          count      mean       std     min     25%     50%      75%     max
+# DEXUSEU  815.0  1.151899  0.043837  1.0682  1.1166  1.1406  1.18285  1.2488
+&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;the-theory-of-arima-processes&quot;&gt;The Theory of Arima Processes&lt;/h2&gt;
+
+&lt;p&gt;Define the &lt;strong&gt;stochastic process&lt;/strong&gt; $\{y_t:t=-\infty,\ldots,\infty\}$
+indexed by the parameter $t$, which in this case has parameter space
+$\mathbb{Z}$. We treat each realisation $y_t$ as a random variable, with
+its own range, density and associated moments. Treating $y_t$ this way, we
+can the define the unconditional expectation of $y_t$; let $f_{y_t}(y_t)$
+denote the density of $y_t$, allowing us to write&lt;/p&gt;
+
+\[E(y_t)\equiv \int_{-\infty}^{\infty}y_tf_{y_t}(y_t)dy_t = \mu_t\]
+
+&lt;p&gt;which provides us with the theoretical justification of the Arima process,
+since $E(y_t)$ is what we’re actually estimating.&lt;/p&gt;
+
+&lt;h3 id=&quot;white-noise-processes&quot;&gt;White Noise Processes&lt;/h3&gt;
+
+&lt;p&gt;Together with $\{y_t\}$, the other main building block of the Arima
+process is the &lt;strong&gt;white process&lt;/strong&gt; $\{a_t\}$, which, for any $t$ and
+$\ell$, is defined by&lt;/p&gt;
+
+\[\begin{gather}
+    E(a_t)=E(a_t\mid\Omega_t)=0 \\
+    E(a_ta_{t-\ell})=\text{Cov}(a_ta_{t-\ell})=0 \\
+    \text{Var}(a_\ell)=\text{Var}(a_t\mid\Omega_t)=\sigma^2_a 
+    \end{gather}\]
+
+&lt;p&gt;where $\Omega_t$ denote the &lt;strong&gt;information set&lt;/strong&gt; at time $t$.&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 18 Apr 2021 00:00:00 +0200</pubDate>
+        <link>/2021/04/18/arima.html</link>
+        <guid isPermaLink="true">/2021/04/18/arima.html</guid>
+        
+        
+      </item>
+    
   </channel>
 </rss>

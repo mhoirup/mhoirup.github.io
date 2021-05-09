@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Survival Analysis of Unemployment Data</title>
+    <meta name="description" content="Survival analysis is the statistical analysis of duration data. Durationscan be anything from life until death in the medical sciences, run untilfailure in e...">
+    
+    <script type = 'text/x-mathjax-config'>
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/CommonHTML"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+                displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+                processEscapes: true,
+            },
+            "CommonHTML": {
+                mtextInheritFont: true,
+            },
+            "HTML-CSS": {
+                fonts: ["STIX"],
+                imageFont: null,
+                undefinedFamily: "'Arial Unicode MS', cmbright",
+                mtextFontInherit: true,
+            },
+            TeX: {
+                extensions: ["AMSmath.js", "AMSsymbols.js", "noErrors.js", "noUndefined.js"],
+                Macros: { plim: '\\mathop{\\rm plim}'
+                }
+            },
+            styles: { ".MathJax_Display, .MathJax > *": { "background": "inherit" }},
+        });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    
+    <link rel="stylesheet" type="text/css" href="/css/tufte.css">
+    <link rel="canonical" href="/2021/05/07/Survival-Analysis.html">
+    <link rel="alternate" type="application/rss+xml" title="Your awesome title" href="/feed.xml" />
+</head>
+
+
+    <header>
+    <ul class="nav">
+        
+            <a href="/404.html"></a>
+        
+            <a href="/feed.xml"></a>
+        
+            <a href="/">Home</a>
+        
+            <a href="/bibliography/">Bibliography</a>
+        
+            <a href="/about/">About</a>
+        
+            <a href="/css/print.css"></a>
+        
+            <a href="/css/tufte.css"></a>
+        
+            <a href="/assets/main.css"></a>
+        
+    </ul>
+</header>
+
+
+    <body>
+      <article class="group">
+        <h1>Survival Analysis of Unemployment Data</h1>
+<!-- <p class="subtitle">May 7, 2021</p> -->
+
+<p>Survival analysis is the statistical analysis of duration data. Durations
+can be anything from life until death in the medical sciences, run until
+failure in engineering, or in this case, unemployment duration. In this
+project we seek to understand the factors affecting the probability of
+returning to the workforce.</p>
+
+<p><label for="fig1" class="margin-toggle">⊕</label><input type="checkbox" id="fig1" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" src="/assets/unemp/spell_hist.png" /><br /><strong>Figure 1</strong>: Distribution of <code class="language-plaintext highlighter-rouge">spell</code>. A majority of respondents finished their
+unemployment spell prior to 10x2 = 20 week mark, with relatively few
+surpassing 15 two-week intervals.</span></p>
+
+<p>Full code can be found on my github at
+<a href="https://github.com/mhoirup/econometric-projects/tree/main/unemployment">mhoirup/econometric-projects/unemployment</a>,
+where files are split into <code class="language-plaintext highlighter-rouge">imports.R</code>, <code class="language-plaintext highlighter-rouge">exploratory.R</code> and
+<code class="language-plaintext highlighter-rouge">analysis.R</code> to keep some semblance of organisation in the project structure.
+We begin the analysis by loading the data into our R workspace along with
+the packages we’re going to use. The data itself is from <a href="https://cran.r-project.org/web/packages/Ecdat/Ecdat.pdf">the Ecdat
+package</a> and was
+used in McCall (1996). The main methodological references are Cameron &amp;
+Trivedi (2005) and Wooldridge (2010).</p>
+
+<p><label for="fig2" class="margin-toggle">⊕</label><input type="checkbox" id="fig2" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" src="/assets/unemp/censored_hist.png" /><br /><strong>Figure
+2</strong>: Distributions of the four <code class="language-plaintext highlighter-rouge">censor</code> variables where I’ve changed the
+<code class="language-plaintext highlighter-rouge">1</code>s and <code class="language-plaintext highlighter-rouge">0</code>s into booleans for clarity. Here we note the distribution of
+<code class="language-plaintext highlighter-rouge">censor4</code> which is of interest; 1.255 observations have been censored,
+while 2.088 observations correspond to completed spells.</span></p>
+
+<p><label for="fig3" class="margin-toggle">⊕</label><input type="checkbox" id="fig3" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" src="/assets/unemp/age_hist.png" /><br /><strong>Figure 3</strong>: Distribution
+of <code class="language-plaintext highlighter-rouge">age</code>. Bin width is set at 2 to reduce the number of bars in the graph.
+A majority of respondents is under 40 years of age, 2.231 in fact, which
+corresponds to 68% of all observations.</span></p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">Ecdat</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">survival</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+
+</span><span class="n">data</span><span class="p">(</span><span class="n">UnempDur</span><span class="p">);</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">UnempDur</span><span class="p">;</span><span class="w"> </span><span class="n">rm</span><span class="p">(</span><span class="n">UnempDur</span><span class="p">)</span><span class="w">
+</span><span class="n">tibble</span><span class="o">::</span><span class="n">as.tibble</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w">
+</span><span class="c1"># A tibble: 3,343 x 11</span><span class="w">
+</span><span class="c1">#    spell censor1 censor2 censor3 censor4   age ui    reprate disrate logwage tenure</span><span class="w">
+</span><span class="c1">#    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;</span><span class="w">
+</span><span class="c1">#  1     5       1       0       0       0    41 no      0.179   0.045    6.90      3</span><span class="w">
+</span><span class="c1">#  2    13       1       0       0       0    30 yes     0.52    0.13     5.29      6</span><span class="w">
+</span><span class="c1">#  3    21       1       0       0       0    36 yes     0.204   0.051    6.77      1</span><span class="w">
+</span><span class="c1">#  4     3       1       0       0       0    26 yes     0.448   0.112    5.98      3</span><span class="w">
+</span><span class="c1">#  5     9       0       0       1       0    22 yes     0.32    0.08     6.32      0</span><span class="w">
+</span><span class="c1">#  6    11       0       0       0       1    43 yes     0.187   0.047    6.85      9</span><span class="w">
+</span><span class="c1">#  7     1       0       0       0       0    24 no      0.52    0.13     5.61      1</span><span class="w">
+</span><span class="c1">#  8     3       1       0       0       0    32 no      0.373   0.093    6.16      0</span><span class="w">
+</span><span class="c1">#  9     7       1       0       0       0    35 yes     0.52    0.13     5.29      2</span><span class="w">
+</span><span class="c1"># 10     5       0       0       0       1    31 yes     0.52    0.13     5.29      1</span><span class="w">
+</span><span class="c1"># … with 3,333 more rows </span><span class="w">
+</span></code></pre></div></div>
+
+<p>Below is a table with a brief description of each variable. In particular,
+note how <code class="language-plaintext highlighter-rouge">spell</code> give the duration of unemployment in two-week intervals,
+for example, if <code class="language-plaintext highlighter-rouge">spell == 2</code>, a respondent has been unemployed for four
+weeks. Except for <code class="language-plaintext highlighter-rouge">censor4</code>, the <code class="language-plaintext highlighter-rouge">censor</code> variables will not be needed in
+this analysis, as we’re only interested in whether or not respondents had
+entered the workforce at the end of the survey.</p>
+
+<table class="norulers">
+<tr><td><code>spell</code></td><td>Unemployment duration measured in two-week intervals.</td></tr>
+<tr><td><code>censor1</code></td><td><code>1</code> if reemployed at a full-time position after ended spell.</td></tr>
+<tr><td><code>censor2</code></td><td><code>1</code> if reemployed at a part-time position after ended spell.</td></tr>
+<tr><td><code>censor3</code></td><td><code>1</code> if reemployed but later resigned from that reemployment..</td></tr>
+<tr><td><code>censor4</code></td><td><code>1</code> if still unemployed at survey end.</td></tr>
+<tr><td><code>age</code></td><td>Age of respondent.</td></tr>
+<tr><td><code>ui</code></td><td><code>1</code> if respondent has unemployment insurance.</td></tr>
+<tr><td><code>reprate</code></td><td>Eligible replacement rate.</td></tr>
+<tr><td><code>disrate</code></td><td>Eligible disregard rate.</td></tr>
+<tr><td><code>logwage</code></td><td>Logarithmic weekly earnings.</td></tr>
+<tr><td><code>tenure</code></td><td>Tenure at lost job.</td></tr>
+</table>
+
+<p>As a last step in the introduction, summary statistics are computed for
+each variable using my own <code class="language-plaintext highlighter-rouge">dsummary()</code> function, the definition of which
+can be found in <a href="https://github.com/mhoirup/dotfiles/blob/main/.Rprofile">my .Rprofile</a>.</p>
+
+<p><label for="table1" class="margin-toggle"> ⊕</label><input type="checkbox" id="table1" class="margin-toggle" /><span class="marginnote"><strong>Table 1</strong>: Variable summaries of both numerical
+and categorical variables. Take special note of the distribution of <code class="language-plaintext highlighter-rouge">ui</code>,
+whether a respondent has unemployment insurance, which appear to be
+somewhat evenly split among observations </span></p>
+
+<table class="norulers" style="width:51%;">
+<tr><th>Variable</th><th>Type</th><th>N Unique</th><th colspan="2">Mode</th><th>Min</th><th>Mean</th><th>Max</th><th>SD</th></tr>
+<tr><td><code>spell  </code></td><td><code>integer</code></td><td style="text-align:right;"> </td><td style="text-align:center;"><code>     </code></td><td>&zwnj;</td><td style="text-align:right;">1.00  </td><td style="text-align:right;">6.25  </td><td style="text-align:right;">28.00 </td><td style="text-align:right;">5.61  </td></tr>
+<tr><td><code>censor1</code></td><td><code>logical</code></td><td style="text-align:right;">2</td><td style="text-align:center;"><code>False</code></td><td>67.90%</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td></tr>
+<tr><td><code>censor2</code></td><td><code>logical</code></td><td style="text-align:right;">2</td><td style="text-align:center;"><code>False</code></td><td>89.86%</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td></tr>
+<tr><td><code>censor3</code></td><td><code>logical</code></td><td style="text-align:right;">2</td><td style="text-align:center;"><code>False</code></td><td>82.83%</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td></tr>
+<tr><td><code>censor4</code></td><td><code>logical</code></td><td style="text-align:right;">2</td><td style="text-align:center;"><code>False</code></td><td>62.45%</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td></tr>
+<tr><td><code>age    </code></td><td><code>integer</code></td><td style="text-align:right;"> </td><td style="text-align:center;"><code>     </code></td><td>&zwnj;</td><td style="text-align:right;">20.00 </td><td style="text-align:right;">35.44 </td><td style="text-align:right;">61.00 </td><td style="text-align:right;">10.64 </td></tr>
+<tr><td><code>ui     </code></td><td><code>factor </code></td><td style="text-align:right;">2</td><td style="text-align:center;"><code>Yes  </code></td><td>55.28%</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td><td style="text-align:right;">&zwnj;</td></tr>
+<tr><td><code>reprate</code></td><td><code>double </code></td><td style="text-align:right;"> </td><td style="text-align:center;"><code>     </code></td><td>&zwnj;</td><td style="text-align:right;">0.07  </td><td style="text-align:right;">0.45  </td><td style="text-align:right;">2.06  </td><td style="text-align:right;">0.11  </td></tr>
+<tr><td><code>disrate</code></td><td><code>double </code></td><td style="text-align:right;"> </td><td style="text-align:center;"><code>     </code></td><td>&zwnj;</td><td style="text-align:right;">0.00  </td><td style="text-align:right;">0.11  </td><td style="text-align:right;">1.02  </td><td style="text-align:right;">0.07  </td></tr>
+<tr><td><code>logwage</code></td><td><code>double </code></td><td style="text-align:right;"> </td><td style="text-align:center;"><code>     </code></td><td>&zwnj;</td><td style="text-align:right;">2.71  </td><td style="text-align:right;">5.69  </td><td style="text-align:right;">7.60  </td><td style="text-align:right;">0.54  </td></tr>
+<tr><td><code>tenure </code></td><td><code>integer</code></td><td style="text-align:right;"> </td><td style="text-align:center;"><code>     </code></td><td>&zwnj;</td><td style="text-align:right;">0.00  </td><td style="text-align:right;">4.11  </td><td style="text-align:right;">40.00 </td><td style="text-align:right;">5.86  </td></tr>
+</table>
+
+<p><label for="fig4" class="margin-toggle">⊕</label><input type="checkbox" id="fig4" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" src="/assets/unemp/rates_density.png" /><br /><strong>Figure 4</strong>:
+Densities of <code class="language-plaintext highlighter-rouge">reprate</code> and <code class="language-plaintext highlighter-rouge">disrate</code>. As can be seen in table 1, both
+variables are of double type, however, examining their number unique
+values, e.g. <code class="language-plaintext highlighter-rouge">length(unique(data$reprate))</code>, reveal
+that neither are exactly continuous; <code class="language-plaintext highlighter-rouge">reprate</code> has 419 unique values while
+<code class="language-plaintext highlighter-rouge">disrate</code> has 246. The range of both variables is too long to treat them as
+discrete, so we’re going to leave them as is.</span></p>
+
+<h2 id="censoring-mechanisms">Censoring Mechanisms</h2>
+
+<p><strong>Censoring</strong> refers to the inaccurate measurement of the observed duration $t$
+due to the way data is sampled. Different types of censoring exist, which
+is defined by the censoring time $c$, which denote the time at which a
+realisation of the random variable $T$ was sampled. For an observation not
+to be censored we require that $t$ is known, and therefore the implied
+relation $0\leqslant t\leqslant c$. In the survival analysis literature we
+typically deal with one of the following censoring mechanisms:</p>
+
+<table class="norulers">
+<tr><td><strong>right-<br />censoring</strong></td><td>Spell is observed from time 0 until censoring time $c$. Time $t$ is unknown and somewhere in the interval $(c,\infty)$.</td></tr>
+<tr><td><strong>left-<br />censoring</strong></td><td>Spell has already ended at censor time $c$. Time $t$ is unknown but somewhere in the interval $(0,c)$.</td></tr>
+<tr><td><strong>interval-<br />censoring</strong></td><td>Spell has ended at censor time $c$, but time $t$ is unknown. What is known is that $t$ is somewhere in the interval $[t_1^*,t_2^*]$.</td></tr>
+</table>
+
+<p>Define the <strong>censoring mechanism</strong> as $C$, and let $T^*$ denote the true
+(as in, unaffected by censoring) version of the observed variable $T$. In
+our sample we thus observe the (potentially) censored $T=\min(T^*, C)$, as
+well as a censoring indicator $\delta=I(T^*&lt;C)$, which equals 1 if the
+observation has <em>not</em> been censored and 0 otherwise. For standard survival
+analysis methods to be valid under the presence of censoring, we require
+that $C$ is independent of $T^*$, i.e. the parameters of the distribution
+of $C$ are uninformative about the parameters of the distribution of $T^*$.</p>
+
+<p>Multiple censoring mechanisms exists, with the type of mechanism depending
+on the way the sampling is carried. In this case we have <strong>type I</strong>
+censoring, whereby $C$ is effectively a fixed value, namely the time the
+survey ends. Due to the fixed $C$ for all $t$, we have $\Pr(T\geqslant
+t\mid \delta = 0)=\Pr(T\geqslant t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$,
+a property of all independent censoring mechanisms, which allows us to
+treat $\delta$ as exogenous, meaning we don’t have to model $C$.</p>
+
+<figure><img src="/assets/unemp/spell_censor4.png" /><figcaption class="maincolumn-figure"><strong>Figure 5</strong>: <code>censor4</code> over the values
+of <code>spell</code>. Unsurprisingly, the length of the spell appear to correspond to
+a greater chance of an observation being censored, which aligns with the
+conventional wisdom that unemployment is harder to escape the longer one is
+in it, making a spell exceed the sampling period. The correlation
+coefficient between <code>censor4</code> and <code>spell</code> is 0.31, which adds evidence to
+the previous statement.</figcaption></figure>
+
+<p><label for="fig6" class="margin-toggle">⊕</label><input type="checkbox" id="fig6" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" src="/assets/unemp/logwage_hist.png" /><br /><strong>Figure 6</strong>:
+Density of <code class="language-plaintext highlighter-rouge">logwage</code>. Observations are centred around the 5.5
+mark, with a distribution that appear to be, for the most part, bell shaped.</span></p>
+
+<p><label for="fig7" class="margin-toggle">⊕</label><input type="checkbox" id="fig7" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" src="/assets/unemp/tenure_hist.png" /><br /><strong>Figure 7</strong>:
+Histogram of <code class="language-plaintext highlighter-rouge">tenure</code>. 2.587 observations, 77% of the data, had a tenure of
+five years or less at their lost job, which is not surprising, as typically
+less experienced personnel is let go of first.</span></p>
+
+<h2 id="survivor-hazard-and-cumulative-hazard-functions">Survivor, Hazard and Cumulative Hazard Functions</h2>
+
+<p>Let $T$ denote our response variable, in this case <code class="language-plaintext highlighter-rouge">spell</code>. For the
+variable $T$, which quantifies the duration of moving from one state to
+another, we associate with it the <strong>survivor function</strong> $S(t)=\Pr(T&gt;t)$. The
+survivor function is related to the CDF as $S(t)=1-F(t)$, and thus gives
+the probability of continuing in the state from $t_j$ to $t_{j+1}$. Since
+$S(t)$ is monotonically declining, we have $\lim_{t\to\infty}S(t)=0$ under
+the assumption that spells ultimately do end. From $S(t)$, we can obtain
+$E(T)$ as the area under the survival curve as
+$E(T)=\int_{0}^{\infty}S(u)du$.</p>
+
+<p>While $S(t)$ gives the probability of <em>not</em> transitioning at period $t$,
+the <strong>hazard function</strong> $h(t)$ gives the probability of transition at
+period $t$. Here we see the terminology’s roots within the medical sciences
+once more, as $h(t)$ gives the ‘hazard’ of transitioning from the
+state of life to the state of death. The hazard function is defined as</p>
+
+\[h(t)=\begin{cases}
+    \lim\limits_{\Delta t\to 0}\dfrac{\Pr(t\leqslant T&lt;t+\Delta t\mid
+        T\geqslant t)}{\Delta t}\equiv -\dfrac{d\ln
+        S(t)}{dt}&amp; \text{for continuous $T$} \\
+        \Pr(T=t\mid T\geqslant t) &amp; \text{for discrete $T$}
+    \end{cases}\]
+
+<p>with the equality $h(t)=f(t)/S(t)$ holding in both cases, where
+$f(t)=dF(t)/dt$ is the density/mass function of $T$.  Lastly,
+we have the <strong>cumulative hazard function</strong>, in which we integrate
+$h(t)$ over the interval $[0,t]$, so that</p>
+
+\[H(t)=\begin{cases}
+    \int_{0}^{t}h(u)du&amp; \text{for continuous }T \\
+    \sum_{j\mid t_j\leqslant t}^{} h(t_j)&amp; \text{for discrete $T$}
+    \end{cases}\]
+
+<p>There’s therefore no probabilistic interpretation of $H(t)$, as
+it’s essentially the summation of very small probabilities, and therefore
+not bounded within the unit interval, but it’s a quantity which increases
+as $t\to\infty$, and can be viewed as the increased hazard of transitioning
+states as time goes on.</p>
+
+<h2 id="nonparametric-models">Nonparametric Models</h2>
+
+<p>Sample estimates for $S(t)$ and $H(t)$ are readily available via the
+<strong>Kaplan-Meier</strong> and <strong>Nelson-Aalen</strong> estimators, respectively. In
+constructing these estimators, we make use of the following variables:</p>
+
+<table class="norulers">
+<tr><td>$d_j$</td><td>The number of completed spells at time $t_j$.</td></tr>
+<tr><td>$m_j$</td><td>The number of right-censored spells in the interval $[t_j,t_{j+1})$.</td></tr>
+<tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored just before time $t_j$, which can be computed as $r_j=\sum_{l\mid l\geqslant j}(d_l+m_l)$.</td></tr>
+</table>
+
+<p>Using the sample estimate of the hazard function $\hat{h}(t_j)=d_j/r_j$, we
+can then derive the nonparametric models as $\hat{S}(t)=\prod_{t_j\mid
+t_j\leqslant t}1-\hat{h}(t_j)$ for the Kaplan-Meier estimate of the
+survivor function, and $\hat{H}(t)=\sum_{t_j\mid t_j\leqslant t}
+\hat{h}(t_j)$ for the Nelson-Aalen estimate of the cumulative hazard. We
+obtained our estimators by <code class="language-plaintext highlighter-rouge">survfit(Surv(spell, censor4 == 0) ~ 1, data)</code>
+via <a href="https://cran.microsoft.com/web/packages/survival/survival.pdf">the survival
+package</a>.
+While the confidence intervals are readily available for the Kaplan-Meier
+estimator, they must be computed «by hand» for the Nelson-Aalen estimator
+for the cumulative hazard. Fortunately, the standard deviations for both
+estimators for all $t$ are available in the resulting object, so the
+confidence intervals are easily derived via a small custom function:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">chazci</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">.05</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">lower</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">model</span><span class="o">$</span><span class="n">cumhaz</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="n">qnorm</span><span class="p">(</span><span class="n">alpha</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">model</span><span class="o">$</span><span class="n">std.chaz</span><span class="p">)</span><span class="w">
+    </span><span class="n">upper</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">model</span><span class="o">$</span><span class="n">cumhaz</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">qnorm</span><span class="p">(</span><span class="n">alpha</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">model</span><span class="o">$</span><span class="n">std.chaz</span><span class="p">)</span><span class="w">
+    </span><span class="n">data.frame</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span><span class="w"> </span><span class="n">upper</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<figure><img src="/assets/unemp/nonparam_uni.png" /><figcaption class="maincolumn-figure"><strong>Figure 8</strong>: Nonparametric
+models estimated on <code>spell</code>. The shaded area gives the 95% confidence
+interval. From the Kaplan-Meier estimator, we can see how the probability
+of ending a spell decreases rapidly until around the 7x2 = 14 week mark,
+where the rate of decline decreases a bit. The Nelson-Aalen estimator show
+a steady increase in the cumulative hazard, with confidence bands spanning
+further and further as <code>spell</code> increases.</figcaption></figure>
+
+<figure><img src="/assets/unemp/nonparam_stratified.png" /><figcaption class="maincolumn-figure"><strong>Figure 9</strong>:
+Nonparametric models estimated on <code>spell</code> when stratified by <code>ui</code>, i.e. by
+having unemployment insurance or not. The shaded area gives the 95% confidence
+interval. Unsurprisingly, those who have unemployment insurance are more
+likely to stay unemployment than those without, as the financial burden of
+unemployment is alleviated. The survivor functions appear to converge as
+<code>spell</code> increases, while the cumulative hazards appear to be
+proportional to each other, implying that, over time, the probability of
+staying unemployed is similar for for those who collect UI and those who do
+not, with the difference in probability of employment between the two
+remains the same.</figcaption></figure>
+
+<h2 id="parametric-models-for-survival-analysis">Parametric Models for Survival Analysis</h2>
+
+<h3 id="distributions-for-duration-data">Distributions for Duration Data</h3>
+
+<p>Here we’ll introduce a selection of distributions we’ll consider in our
+parametric model of the survival times. We consider four distributions in
+total, the exponential, Weibull, log-normal and log-logistic, but this list
+is by no means exhaustive. We’ll fit each distribution to the data and
+estimate it’s parameters via MLE, and then use those parameters to estimate
+the survivor function and the cumulative hazard for that distribution on
+<code class="language-plaintext highlighter-rouge">spell</code>.</p>
+
+<p><span style="font-weight:bold;font-size:1.1rem;margin-right:1rem">Exponential</span>
+Under the assumption that $T\sim$ Exponential$(\lambda)$, where $\lambda$ is
+the rate (or inverse scale) parameter of the distribution, the hazard
+function will be given as the constant $h(t)=\lambda$. Since the density
+function of $T\sim \text{Exp}(\lambda)$ is $f(t)=\lambda\exp(-\lambda t)$,
+we have $S(t)=\exp(-\lambda t)$. Additionally, we have the moments
+$E(T)=1/\lambda$ and $\text{Var}(T)=1/\lambda^2$.</p>
+
+<p><span style="font-weight:bold;font-size:1.1rem;margin-right:1rem">Weibull</span>
+Under the assumption that $T\sim$ Weibull$(\lambda,p)$, where $\lambda$ and $p$ are
+scale and shape parameters respectively, we have the hazard
+$h(t)=\lambda^ppt^{p-1}$, density
+$f(t)=\frac{p}{\lambda}(\frac{t}{\lambda})^{p-1}\exp[-(t/\lambda)^p]$
+defined for $t\geqslant 0$ (otherwise zero), and the survivor function
+$S(t)=\exp[-(\lambda t)^p]$. The Weibull distribution is closely related to
+the exponential distribution, since, if $T\sim$ Weibull$(\lambda,p)$ then $T^p\sim$
+Exponential$(\lambda)$.</p>
+
+<p><span style="font-weight:bold;font-size:1.1rem;margin-right:1rem">Log-Normal</span>
+Under the assumption that $T\sim$ Log-Normal$(\mu,\sigma^2)$, where
+$\mu$ and $\sigma$ are location and scale parameters respectively, we have
+the hazard and density functions given as</p>
+
+\[\begin{align}
+    h(t)&amp;=\frac{\exp[-(\ln
+    t-\mu)^2/2\sigma^2]}{t\sigma\sqrt{2\pi}[1-\Phi((\ln t-\mu)/\sigma)}
+    \\[1em]
+    f(t)&amp;=\frac{1}{t\sigma\sqrt{2\pi}}\exp(-\frac{(\ln t-\mu)^2}{2\sigma})
+    \end{align}\]
+
+<p>where $\Phi(\cdot)$ is the standard Gaussian cdf. Additionally, under
+lognormality we have the survivor function $S(t)=1-\Phi[(\ln t -\mu)/\sigma]$.</p>
+
+<p><span style="font-weight:bold;font-size:1.1rem;margin-right:1rem">Log-Logistic</span>
+Under the assumption that $T\sim$ Log-Logistic$(\alpha, \beta)$, where
+$\alpha$ and $\beta$ are scale and shape parameters respectively, we have
+the hazard $h(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]$, the
+density function
+$f(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]^2$ and the
+survivor function $S(t)=[1+(t/\alpha)^{\beta}]^{-1}$.</p>
+
+<p><label for="sn1" class="margin-toggle"> ⊕</label><input type="checkbox" id="sn1" class="margin-toggle" /><span class="marginnote">Since the log-logistic distribution functions are
+imported, we need to specify the actual R function in <code class="language-plaintext highlighter-rouge">fitdistr</code> rather
+than giving a string as it’s argument. This has the implication that we
+also need to manually specify starting values for the optimisation
+procedure. I tried a few different starting values for the parameters, and
+all converged to the same values. In the code you’ll find starting values
+at 1 for both parameters - a nice generic value :-) </span></p>
+
+<p>Each distribution is fitted to the data via <code class="language-plaintext highlighter-rouge">fitdistr</code> from <a href="https://cran.r-project.org/web/packages/MASS/MASS.pdf">the MASS
+package</a>. For
+example, the exponential distribution is fitted as
+<code class="language-plaintext highlighter-rouge">MASS::fitdistr(data$spell, 'exponential')</code>. All distribution are available
+base R, except for the log-logistic, which we instead import from <a href="https://cran.r-project.org/web/packages/actuar/actuar.pdf">the
+actuar package</a>.
+Parameter estimates were then extracted from the resulting object.</p>
+
+<p><label for="table2" class="margin-toggle"> ⊕</label><input type="checkbox" id="table2" class="margin-toggle" /><span class="marginnote"><strong>Table 2</strong>: Parameter estimates for the
+distributions entertained, as fitted on on <code class="language-plaintext highlighter-rouge">spell</code>. Standard errors are
+given in parentheses. Estimates were obtained using the default of
+<code class="language-plaintext highlighter-rouge">fitdistr</code> which is the Nelder-Mead method. </span></p>
+
+<table class="norulers">
+<tr><th></th><th><strong>Location</strong></th><th><strong>Scale/Rate</strong></th><th><strong>Shape</strong></th></tr>
+<tr><td>Exponential<td></td></td><td style="text-align:center;">0.160 (0.003)</td><td></td></tr>
+<tr><td>Weibull</td><td></td><td style="text-align:center;">1.184 (0.016)</td><td style="text-align:center;">6.649 (0.103)</td></tr>
+<tr><td>Log-Normal</td><td style="text-align:center;">1.439 (0.016)</td><td style="text-align:center;">0.918 (0.011)</td><td></td></tr>
+<tr><td>Log-Logistic</td><td></td><td style="text-align:center;">1.826 (0.026)</td><td style="text-align:center;">0.235 (0.004)</td></tr>
+</table>
+
+<p>Having obtained our parameters, we compute the densities of <code class="language-plaintext highlighter-rouge">spell</code> under
+the given distribution. These densities are then saved in the dataframe
+<code class="language-plaintext highlighter-rouge">pdfs</code>. Using the exponential distribution as an example, we have</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">expo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">MASS</span><span class="o">::</span><span class="n">fitdistr</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">spell</span><span class="p">,</span><span class="w"> </span><span class="s1">'exponential'</span><span class="p">)[[</span><span class="m">1</span><span class="p">]]</span><span class="w"> </span><span class="c1"># Estimate parameter(s)</span><span class="w">
+</span><span class="n">pdf</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">dexp</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">spell</span><span class="p">,</span><span class="w"> </span><span class="n">expo</span><span class="p">)</span><span class="w"> </span><span class="c1"># Estimate densities</span><span class="w">
+</span></code></pre></div></div>
+
+<figure><img src="/assets/unemp/pdfs.png" /><figcaption class="maincolumn-figure"><strong>Figure 10</strong>:</figcaption></figure>
+
+<p>As we did with the density functions, we also compute the survivor
+function under each distribution and place them in the dataframe
+<code class="language-plaintext highlighter-rouge">survivor_functions</code>. Using the equality $S(t)=1-F(t)$,
+the computation of $S(t)$ is very simple:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">St</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pexp</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">spell</span><span class="p">,</span><span class="w"> </span><span class="n">expo</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<figure><img src="/assets/unemp/surv_funcs.png" /><figcaption class="maincolumn-figure"><strong>Figure 11</strong>:</figcaption></figure>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">distributions</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'Exponential'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Weibull'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Log-Normal'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Log-Logistic'</span><span class="p">)</span><span class="w">
+</span><span class="n">setNames</span><span class="p">(</span><span class="n">pdfs</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">survivor_functions</span><span class="p">,</span><span class="w"> </span><span class="n">distributions</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">cbind</span><span class="p">(</span><span class="n">spell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">spell</span><span class="p">,</span><span class="w"> </span><span class="n">.</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">distinct</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">arrange</span><span class="p">(</span><span class="n">spell</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">mutate_at</span><span class="p">(</span><span class="n">vars</span><span class="p">(</span><span class="n">distributions</span><span class="p">),</span><span class="w"> </span><span class="n">cumsum</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<figure><img src="/assets/unemp/chaz.png" /><figcaption class="maincolumn-figure"><strong>Figure 12</strong>:</figcaption></figure>
+
+
+
+      </article>
+      <span class="print-footer">Survival Analysis of Unemployment Data - May 7, 2021 - </span>
+      <footer>
+<!-- <div class="credits"> -->
+<!-- <span>&copy; 2021 &nbsp;&nbsp;</span></br> <br> -->
+<!-- </div> -->  
+</footer>
+
+    </body>
+</html>

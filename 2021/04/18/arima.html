@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Econometrics with Numpy: Arima Models</title>
+    <meta name="description" content="In this project we’ll build an Arima model (mostly) from scratch in Pythonusing the numpy and scipy libraries. At the end, we’ll have obtained aPyton class o...">
+    
+    <script type = 'text/x-mathjax-config'>
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/CommonHTML"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+                displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+                processEscapes: true,
+            },
+            "CommonHTML": {
+                mtextInheritFont: true,
+            },
+            "HTML-CSS": {
+                fonts: ["STIX"],
+                imageFont: null,
+                undefinedFamily: "'Arial Unicode MS', cmbright",
+                mtextFontInherit: true,
+            },
+            TeX: {
+                extensions: ["AMSmath.js", "AMSsymbols.js", "noErrors.js", "noUndefined.js"],
+                Macros: { plim: '\\mathop{\\rm plim}'
+                }
+            },
+            styles: { ".MathJax_Display, .MathJax > *": { "background": "inherit" }},
+        });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    
+    <link rel="stylesheet" type="text/css" href="/css/tufte.css">
+    <link rel="canonical" href="/2021/04/18/arima.html">
+    <link rel="alternate" type="application/rss+xml" title="Your awesome title" href="/feed.xml" />
+</head>
+
+
+    <header>
+    <ul class="nav">
+        
+            <a href="/404.html"></a>
+        
+            <a href="/feed.xml"></a>
+        
+            <a href="/">Home</a>
+        
+            <a href="/bibliography/">Bibliography</a>
+        
+            <a href="/about/">About</a>
+        
+            <a href="/css/print.css"></a>
+        
+            <a href="/css/tufte.css"></a>
+        
+            <a href="/assets/main.css"></a>
+        
+    </ul>
+</header>
+
+
+    <body>
+      <article class="group">
+        <h1>Econometrics with Numpy: Arima Models</h1>
+<!-- <p class="subtitle">April 18, 2021</p> -->
+
+<p>In this project we’ll build an Arima model (mostly) from scratch in Python
+using the <code class="language-plaintext highlighter-rouge">numpy</code> and <code class="language-plaintext highlighter-rouge">scipy</code> libraries. At the end, we’ll have obtained a
+Pyton class object capable of estimating Arima models of varying orders as
+well as forecasting values into the future.</p>
+
+<p>The data we’ll use are the USD/EUR exchange rates spanning from January 2nd
+2015 to April 19th 2021, both dates inclusive, sourced from the Federal
+Reserve Economic Data (FRED) database. The data can found at
+<a href="https://fred.stlouisfed.org/series/DEXUSEU">https://fred.stlouisfed.org/series/DEXUSEU</a>.
+Code fot this project is available on my Github at
+<a href="https://github.com/mhoirup/econometric-projects/blob/main/econometrics-python/arima-models.py">mhoirup/econometrics-python/arima_models.py</a>.</p>
+
+<p>We start off by importing the necessary libraries and sourcing the data:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">pandas_datareader</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+
+<span class="n">series</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s">'DEXUSEU'</span><span class="p">,</span> <span class="s">'fred'</span><span class="p">,</span> <span class="s">'2018-01-02'</span><span class="p">)</span>
+<span class="n">series</span><span class="p">.</span><span class="n">describe</span><span class="p">().</span><span class="n">T</span>
+<span class="c1">#          count      mean       std     min     25%     50%      75%     max
+# DEXUSEU  815.0  1.151899  0.043837  1.0682  1.1166  1.1406  1.18285  1.2488
+</span>
+</code></pre></div></div>
+
+<h2 id="the-theory-of-arima-processes">The Theory of Arima Processes</h2>
+
+<p>Define the <strong>stochastic process</strong> $\{y_t:t=-\infty,\ldots,\infty\}$
+indexed by the parameter $t$, which in this case has parameter space
+$\mathbb{Z}$. We treat each realisation $y_t$ as a random variable, with
+its own range, density and associated moments. Treating $y_t$ this way, we
+can the define the unconditional expectation of $y_t$; let $f_{y_t}(y_t)$
+denote the density of $y_t$, allowing us to write</p>
+
+\[E(y_t)\equiv \int_{-\infty}^{\infty}y_tf_{y_t}(y_t)dy_t = \mu_t\]
+
+<p>which provides us with the theoretical justification of the Arima process,
+since $E(y_t)$ is what we’re actually estimating.</p>
+
+<h3 id="white-noise-processes">White Noise Processes</h3>
+
+<p>Together with $\{y_t\}$, the other main building block of the Arima
+process is the <strong>white process</strong> $\{a_t\}$, which, for any $t$ and
+$\ell$, is defined by</p>
+
+\[\begin{gather}
+    E(a_t)=E(a_t\mid\Omega_t)=0 \\
+    E(a_ta_{t-\ell})=\text{Cov}(a_ta_{t-\ell})=0 \\
+    \text{Var}(a_\ell)=\text{Var}(a_t\mid\Omega_t)=\sigma^2_a 
+    \end{gather}\]
+
+<p>where $\Omega_t$ denote the <strong>information set</strong> at time $t$.</p>
+
+
+
+      </article>
+      <span class="print-footer">Econometrics with Numpy: Arima Models - April 18, 2021 - </span>
+      <footer>
+<!-- <div class="credits"> -->
+<!-- <span>&copy; 2021 &nbsp;&nbsp;</span></br> <br> -->
+<!-- </div> -->  
+</footer>
+
+    </body>
+</html>

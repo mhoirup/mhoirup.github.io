@@ -1,9 +1,72 @@
----
-permalink: /404.html
-layout: default
----
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Your awesome title</title>
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.">
+    
+    <script type = 'text/x-mathjax-config'>
+        MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/CommonHTML"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+                displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
+                processEscapes: true,
+            },
+            "CommonHTML": {
+                mtextInheritFont: true,
+            },
+            "HTML-CSS": {
+                fonts: ["STIX"],
+                imageFont: null,
+                undefinedFamily: "'Arial Unicode MS', cmbright",
+                mtextFontInherit: true,
+            },
+            TeX: {
+                extensions: ["AMSmath.js", "AMSsymbols.js", "noErrors.js", "noUndefined.js"],
+                Macros: { plim: '\\mathop{\\rm plim}'
+                }
+            },
+            styles: { ".MathJax_Display, .MathJax > *": { "background": "inherit" }},
+        });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    
+    <link rel="stylesheet" type="text/css" href="/css/tufte.css">
+    <link rel="canonical" href="/404.html">
+    <link rel="alternate" type="application/rss+xml" title="Your awesome title" href="/feed.xml" />
+</head>
 
-<style type="text/css" media="screen">
+
+    <header>
+    <ul class="nav">
+        
+            <a href="/404.html"></a>
+        
+            <a href="/feed.xml"></a>
+        
+            <a href="/">Home</a>
+        
+            <a href="/bibliography/">Bibliography</a>
+        
+            <a href="/about/">About</a>
+        
+            <a href="/css/print.css"></a>
+        
+            <a href="/css/tufte.css"></a>
+        
+            <a href="/assets/main.css"></a>
+        
+    </ul>
+</header>
+
+
+    <body>
+      <article class="group">
+        <style type="text/css" media="screen">
   .container {
     margin: 10px auto;
     max-width: 600px;
@@ -23,3 +86,14 @@ layout: default
   <p><strong>Page not found :(</strong></p>
   <p>The requested page could not be found.</p>
 </div>
+
+      </article>
+      <span class="print-footer"> - </span>
+      <footer>
+<!-- <div class="credits"> -->
+<!-- <span>&copy; 2021 &nbsp;&nbsp;</span></br> <br> -->
+<!-- </div> -->  
+</footer>
+
+    </body>
+</html>
