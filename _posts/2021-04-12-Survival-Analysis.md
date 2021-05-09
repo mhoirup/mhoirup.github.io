@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Survival Analysis of Unemployment Data'
-date:   2021-04-25
+date:   2021-05-07
 ---
 
 Survival analysis is the statistical analysis of duration data. Durations
@@ -148,7 +148,7 @@ t\mid \delta = 0)=\Pr(T\geqslant t)$ and $\Pr(T=t\mid \delta=0)=\Pr(T=t)$,
 a property of all independent censoring mechanisms, which allows us to
 treat $\delta$ as exogenous, meaning we don't have to model $C$. 
 
-{% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 4**: `censor4` over the values
+{% maincolumn 'assets/unemp/spell_censor4.png' "**Figure 5**: `censor4` over the values
 of `spell`. Unsurprisingly, the length of the spell appear to correspond to
 a greater chance of an observation being censored, which aligns with the
 conventional wisdom that unemployment is harder to escape the longer one is
@@ -156,14 +156,14 @@ in it, making a spell exceed the sampling period. The correlation
 coefficient between `censor4` and `spell` is 0.31, which adds evidence to
 the previous statement." %}
 
-{% marginfigure 'fig5' 'assets/unemp/logwage_hist.png' "**Figure 5**:
+{% marginfigure 'fig6' 'assets/unemp/logwage_hist.png' "**Figure 6**:
 Density of `logwage`. Observations are centred around the 5.5
 mark, with a distribution that appear to be, for the most part, bell shaped." %}
 
-{% marginfigure 'fig6' 'assets/unemp/tenure_hist.png' "**Figure 6**:
+{% marginfigure 'fig7' 'assets/unemp/tenure_hist.png' "**Figure 7**:
 Histogram of `tenure`. 2.587 observations, 77% of the data, had a tenure of
-five years or less at their lost job, which is unsurprising, as typically
-less experienced personnel is let of off first." %}
+five years or less at their lost job, which is not surprising, as typically
+less experienced personnel is let go of first." %}
 
 ## Survivor, Hazard and Cumulative Hazard Functions
 
@@ -212,18 +212,6 @@ states as time goes on.
 
 ## Nonparametric Models
 
-{% marginfigure 'fig8' 'assets/unemp/kaplan_meier.png' "**Figure 8**:
-Kaplan-Meier estimator on `spell`, with the shaded
-area giving the 95% confidence interval. Note the sharp decline until around
-the 7x2 = 14 week mark, after which the rate of decline in 'survival'
-appear to diminish a bit." %}
-
-{% marginfigure 'fig9' 'assets/unemp/kaplan_meier_mv.png' "**Figure 9**:
-Kaplan-Meier estimator on `spell` stratified by `ui`, with shaded area giving the
-95% confidence interval. Unsurprisingly, those who have unemployment
-insurance are more likely to stay unemployment than those without, as the
-financial burden of unemployment is alleviated." %}
-
 Sample estimates for $S(t)$ and $H(t)$ are readily available via the
 **Kaplan-Meier** and **Nelson-Aalen** estimators, respectively. In
 constructing these estimators, we make use of the following variables:  
@@ -234,40 +222,19 @@ constructing these estimators, we make use of the following variables:
 <tr><td>$r_j$</td><td>The number of spell that have neither ended nor been censored just before time $t_j$, which can be computed as $r_j=\sum_{l\mid l\geqslant j}(d_l+m_l)$.</td></tr>
 </table>
 
-Using the sample estimate of the hazard function
-$\hat{h}(t_j)=d_j/r_j$, we can then derive the nonparametric models
-as $\hat{S}(t)=\prod_{t_j\mid t_j\leqslant t}1-\hat{h}(t_j)$ for the
-Kaplan-Meier estimate of the survivor function, and
-$\hat{H}(t)=\sum_{t_j\mid t_j\leqslant t} \hat{h}(t_j)$ for the
-Nelson-Aalen estimate of the cumulative hazard. Their estimation in R is
-pretty straightforward:
-
-{% maincolumn 'assets/unemp/nonparam_uni.png' "**Figure 4**: `censor4` over the values
-of `spell`. Unsurprisingly, the length of the spell appear to correspond to
-a greater chance of an observation being censored, which aligns with the
-conventional wisdom that unemployment is harder to escape the longer one is
-in it, making a spell exceed the sampling period. The correlation
-coefficient between `censor4` and `spell` is 0.31, which adds evidence to
-the previous statement." %}
-
-{% maincolumn 'assets/unemp/nonparam_stratified.png' "**Figure 4**: `censor4` over the values
-of `spell`. Unsurprisingly, the length of the spell appear to correspond to
-a greater chance of an observation being censored, which aligns with the
-conventional wisdom that unemployment is harder to escape the longer one is
-in it, making a spell exceed the sampling period. The correlation
-coefficient between `censor4` and `spell` is 0.31, which adds evidence to
-the previous statement." %}
-
-```R
-# Univariate sample estimates
-uvnonparam <- survfit(Surv(spell, censor4 == 0) ~ 1, data)
-# Multivariate sample estimates stratified by ui
-mvnonparam <- survfit(Surv(spell, censor4 == 0) ~ ui, data)
-```
-
-While the confidence intervals were readily available in the `survfit`
-object for $\hat{S}(t)$, they must be manually computed for
-$\hat{H}(t)$, which we do as  
+Using the sample estimate of the hazard function $\hat{h}(t_j)=d_j/r_j$, we
+can then derive the nonparametric models as $\hat{S}(t)=\prod_{t_j\mid
+t_j\leqslant t}1-\hat{h}(t_j)$ for the Kaplan-Meier estimate of the
+survivor function, and $\hat{H}(t)=\sum_{t_j\mid t_j\leqslant t}
+\hat{h}(t_j)$ for the Nelson-Aalen estimate of the cumulative hazard. We
+obtained our estimators by `survfit(Surv(spell, censor4 == 0) ~ 1, data)`
+via [the survival
+package](https://cran.microsoft.com/web/packages/survival/survival.pdf).
+While the confidence intervals are readily available for the Kaplan-Meier
+estimator, they must be computed <<by hand>> for the Nelson-Aalen estimator
+for the cumulative hazard. Fortunately, the standard deviations for both
+estimators for all $t$ are available in the resulting object, so the
+confidence intervals are easily derived via a small custom function:
 
 ```R
 chazci <- function(model, alpha = .05) {
@@ -276,6 +243,27 @@ chazci <- function(model, alpha = .05) {
     data.frame(lower, upper)
 }
 ```
+
+{% maincolumn 'assets/unemp/nonparam_uni.png' "**Figure 8**: Nonparametric
+models estimated on `spell`. The shaded area gives the 95% confidence
+interval. From the Kaplan-Meier estimator, we can see how the probability
+of ending a spell decreases rapidly until around the 7x2 = 14 week mark,
+where the rate of decline decreases a bit. The Nelson-Aalen estimator show
+a steady increase in the cumulative hazard, with confidence bands spanning
+further and further as `spell` increases." %}
+
+{% maincolumn 'assets/unemp/nonparam_stratified.png' "**Figure 9**:
+Nonparametric models estimated on `spell` when stratified by `ui`, i.e. by
+having unemployment insurance or not. The shaded area gives the 95% confidence
+interval. Unsurprisingly, those who have unemployment insurance are more
+likely to stay unemployment than those without, as the financial burden of
+unemployment is alleviated. The survivor functions appear to converge as
+`spell` increases, while the cumulative hazards appear to be
+proportional to each other, implying that, over time, the probability of
+staying unemployed is similar for for those who collect UI and those who do
+not, with the difference in probability of employment between the two
+remains the same." %}
+
 
 ## Parametric Models for Survival Analysis
 
@@ -290,7 +278,7 @@ the survivor function and the cumulative hazard for that distribution on
 `spell`.
 
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Exponential</span>
-Under the assumption that $T\sim \text{Exp}(\lambda)$, where $\lambda$ is
+Under the assumption that $T\sim$ Exponential$(\lambda)$, where $\lambda$ is
 the rate (or inverse scale) parameter of the distribution, the hazard
 function will be given as the constant $h(t)=\lambda$. Since the density
 function of $T\sim \text{Exp}(\lambda)$ is $f(t)=\lambda\exp(-\lambda t)$,
@@ -298,17 +286,17 @@ we have $S(t)=\exp(-\lambda t)$. Additionally, we have the moments
 $E(T)=1/\lambda$ and $\text{Var}(T)=1/\lambda^2$.
 
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Weibull</span>
-Under the assumption that $T\sim W(\lambda,p)$, where $\lambda$ and $p$ are
+Under the assumption that $T\sim$ Weibull$(\lambda,p)$, where $\lambda$ and $p$ are
 scale and shape parameters respectively, we have the hazard
 $h(t)=\lambda^ppt^{p-1}$, density
 $f(t)=\frac{p}{\lambda}(\frac{t}{\lambda})^{p-1}\exp[-(t/\lambda)^p]$
 defined for $t\geqslant 0$ (otherwise zero), and the survivor function
 $S(t)=\exp[-(\lambda t)^p]$. The Weibull distribution is closely related to
-the exponential distribution, since, if $T\sim W(\lambda,p)$ then $T^p\sim
-\text{Exp}(\lambda)$.
+the exponential distribution, since, if $T\sim$ Weibull$(\lambda,p)$ then $T^p\sim$
+Exponential$(\lambda)$.
 
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Log-Normal</span>
-Under the assumption that $T\sim \text{Lognormal}(\mu,\sigma^2)$, where
+Under the assumption that $T\sim$ Log-Normal$(\mu,\sigma^2)$, where
 $\mu$ and $\sigma$ are location and scale parameters respectively, we have
 the hazard and density functions given as
 
@@ -325,7 +313,7 @@ where $\Phi(\cdot)$ is the standard Gaussian cdf. Additionally, under
 lognormality we have the survivor function $S(t)=1-\Phi[(\ln t -\mu)/\sigma]$. 
 
 <span style='font-weight:bold;font-size:1.1rem;margin-right:1rem'>Log-Logistic</span>
-Under the assumption that $T\sim \text{Loglogistic}(\alpha, \beta)$, where
+Under the assumption that $T\sim$ Log-Logistic$(\alpha, \beta)$, where
 $\alpha$ and $\beta$ are scale and shape parameters respectively, we have
 the hazard $h(t)=[(\beta/\alpha)(t/\alpha)^{\beta-1}]/[1+(t/\alpha)]$, the
 density function
@@ -346,25 +334,53 @@ example, the exponential distribution is fitted as
 `MASS::fitdistr(data$spell, 'exponential')`. All distribution are available
 base R, except for the log-logistic, which we instead import from [the
 actuar package](https://cran.r-project.org/web/packages/actuar/actuar.pdf).
-Parameter estimates were then extracted from the resulting object, and are
-given in the table below with standard errors in parentheses.
+Parameter estimates were then extracted from the resulting object.
 
+{% marginnote 'table2' "**Table 2**: Parameter estimates for the
+distributions entertained, as fitted on on `spell`. Standard errors are
+given in parentheses. Estimates were obtained using the default of
+`fitdistr` which is the Nelder-Mead method." %}
 
-
-
-<table class='norulers' style='width:35%;'>
+<table class='norulers'>
 <tr><th></th><th><strong>Location</strong></th><th><strong>Scale/Rate</strong></th><th><strong>Shape</strong></th></tr>
-<tr><td>Exponential<td></td></td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>0.160<span style='color:#fafbfc'>)</span>(0.003)</td><td></td></tr>
-<tr><td>Weibull</td><td></td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>1.184<span style='color:#fafbfc'>)</span>(0.016)</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>6.649<span style='color:#fafbfc'>)</span>(0.103)</td></tr>
-<tr><td>Log-Normal</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>1.439<span style='color:#fafbfc'>)</span>(0.016)</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>0.918<span style='color:#fafbfc'>)</span>(0.011)</td><td></td></tr>
-<tr><td>Log-Logistic</td><td></td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>1.826<span style='color:#fafbfc'>)</span>(0.026)</td><td style='text-align:center;'><span style='color:#fafbfc;'>(</span>0.235<span style='color:#fafbfc'>)</span>(0.004)</td></tr>
+<tr><td>Exponential<td></td></td><td style='text-align:center;'>0.160 (0.003)</td><td></td></tr>
+<tr><td>Weibull</td><td></td><td style='text-align:center;'>1.184 (0.016)</td><td style='text-align:center;'>6.649 (0.103)</td></tr>
+<tr><td>Log-Normal</td><td style='text-align:center;'>1.439 (0.016)</td><td style='text-align:center;'>0.918 (0.011)</td><td></td></tr>
+<tr><td>Log-Logistic</td><td></td><td style='text-align:center;'>1.826 (0.026)</td><td style='text-align:center;'>0.235 (0.004)</td></tr>
 </table>
 
-{% maincolumn 'assets/unemp/pdfs.png' "**Figure 4**: `censor4` over the values
-of `spell`. Unsurprisingly, the length of the spell appear to correspond to
-a greater chance of an observation being censored, which aligns with the
-conventional wisdom that unemployment is harder to escape the longer one is
-in it, making a spell exceed the sampling period. The correlation
-coefficient between `censor4` and `spell` is 0.31, which adds evidence to
-the previous statement." %}
+Having obtained our parameters, we compute the densities of `spell` under
+the given distribution. These densities are then saved in the dataframe
+`pdfs`. Using the exponential distribution as an example, we have
+
+```R
+expo <- MASS::fitdistr(data$spell, 'exponential')[[1]] # Estimate parameter(s)
+pdf <- dexp(data$spell, expo) # Estimate densities
+```
+
+{% maincolumn 'assets/unemp/pdfs.png' "**Figure 10**: " %}
+
+As we did with the density functions, we also compute the survivor
+function under each distribution and place them in the dataframe
+`survivor_functions`. Using the equality $S(t)=1-F(t)$,
+the computation of $S(t)$ is very simple:
+
+```R
+St <- 1 - pexp(data$spell, expo)
+```
+
+{% maincolumn 'assets/unemp/surv_funcs.png' "**Figure 11**: " %}
+
+```R
+distributions <- c('Exponential', 'Weibull', 'Log-Normal', 'Log-Logistic')
+setNames(pdfs / survivor_functions, distributions) %>%
+    cbind(spell = data$spell, .) %>%
+    distinct() %>%
+    arrange(spell) %>%
+    mutate_at(vars(distributions), cumsum)
+```
+
+{% maincolumn 'assets/unemp/chaz.png' "**Figure 12**:" %}
+
+
 
